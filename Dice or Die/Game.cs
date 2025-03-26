@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Dice_or_Die
 {
-    public partial class game : Form
+    public partial class Game : Form
     {
-        public game()
+        public Game()
         {
             InitializeComponent();
         }
