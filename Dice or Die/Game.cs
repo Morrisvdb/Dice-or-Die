@@ -13,49 +13,96 @@ namespace Dice_or_Die
     public partial class Game : Form
     {
         public int rolls_left = 3;
-        public List<int> rolls;
-        private List<Button> current_buttons = new List<Button>(6);
+        public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
+        private List<Button> current_buttons = new List<Button>();
+        //private List<Button> locked_dice = new List<Button>();
+        private int dice_count = 5;
 
         public Game()
         {
             InitializeComponent();
         }
 
-        private List<int> roll_dice(int count = 5)
+        private void roll_dice(int count = 5)
         {
-            List<int> rolls = new List<int>(count);
-            Random random = new Random();
-            for (int i = 0; i < count; i++)
+            foreach (var die in dice)
             {
-                rolls.Add(random.Next(1, 7));
-            }
+                if (die.Value.Value)
+                {
+                    continue;
+                }
 
-            return rolls;
+                Random random = new Random();
+                dice[die.Key] = new KeyValuePair<int, bool>(random.Next(1, 7), false);
+            }
         }
 
-        private void draw_dice(int x, int y, List<int> rolls, int size = 50, int count = 5)
+        private void draw_dice(int x, int y, int size = 50, int count = 5)
         {
-            for (int i = 0; i < count; i++)
+            // x (int) -> X coordinate of button set
+            // y (int) -> Y coordinate of button set
+            // rolls (List<int>) -> List of random numbers to display on dice
+            // size (int) -> Size of each button
+            // count (int) -> Number of buttons to draw
+
+            foreach (var die in dice)
             {
-                Button b = new Button();
-                b.Name = "dice_" + i.ToString();
-                b.Text = rolls[i].ToString();
-                b.Width = size;
-                b.Height = size;
-                b.Location = new Point(x + (i * (size * 2)), y);
-                this.Controls.Add(b);
-                current_buttons.Add(b);
+                
             }
-            return;
+
+
+        }
+
+        private void dice_OnClick(object? sender, EventArgs e)
+        {
+            if (sender is Button b)
+            {
+                Dictionary<int, bool> dButton;
+                dice.TryGetValue(b.Name, out dButton);
+                if (dButton == null)
+                {
+                    //dButton = new Dictionary<int, bool>();
+                    //dice.Add(b.Name, dButton);
+                    return;
+                }
+
+                if (dButton[1])
+                {
+                    dButton[1] = false;
+                    b.BackColor = Color.LightGray;
+                }
+                else
+                {
+                    dButton[1] = true;
+                    b.BackColor = Color.Yellow;
+
+                }
+            }
         }
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
-            //Button b = new Button();
+            if (rolls_left <= 0)
+            {
+                return;
+            }
+            rolls_left--;
+            amountrolls_label.Text = rolls_left.ToString();
+            if (rolls_left == 0)
+            {
+                rolldice_button.Enabled = false;
+            }
+            roll_dice(dice_count);
 
-            List<int> rolls = roll_dice();
+            draw_dice(x: 50, y: 50, count: dice_count);
 
-            draw_dice(50, 50, rolls);
+
+            //string outp = "";
+            //foreach (var roll in rolls)
+            //{
+            //    outp += roll.ToString() + " ";
+            //}
+            //label1.Text = outp;
         }
     }
 }
