@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace Dice_or_Die
 {
@@ -15,12 +16,19 @@ namespace Dice_or_Die
         public int rolls_left = 3;
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
-        //private List<Button> locked_dice = new List<Button>();
         private int dice_count = 5;
 
         public Game()
         {
             InitializeComponent();
+        }
+
+        private void init_dice(int count = 5)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(0, false));
+            }
         }
 
         private void roll_dice(int count = 5)
@@ -44,39 +52,40 @@ namespace Dice_or_Die
             // rolls (List<int>) -> List of random numbers to display on dice
             // size (int) -> Size of each button
             // count (int) -> Number of buttons to draw
-
+            clear_dice();
             foreach (var die in dice)
             {
-                
+                Button b = new Button();
+                b.Name = die.Key;
+                b.Text = die.Value.Key.ToString();
+                b.Size = new Size(size, size);
+                b.Location = new Point(x, y);
+                b.Click += dice_OnClick;
+                b.BackColor = Color.LightGray;
+                current_buttons.Add(b);
+                this.Controls.Add(b);
+                x += size + 10;
             }
 
+        }
 
+        private void clear_dice()
+        {
+            foreach (var button in current_buttons)
+            {
+                button.Dispose();
+            }
+            current_buttons.Clear();
         }
 
         private void dice_OnClick(object? sender, EventArgs e)
         {
             if (sender is Button b)
             {
-                Dictionary<int, bool> dButton;
-                dice.TryGetValue(b.Name, out dButton);
-                if (dButton == null)
-                {
-                    //dButton = new Dictionary<int, bool>();
-                    //dice.Add(b.Name, dButton);
-                    return;
-                }
+                KeyValuePair<int, bool> die = dice[b.Name];
+                dice[b.Name] = new KeyValuePair<int, bool>(die.Key, !die.Value);
+                b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
 
-                if (dButton[1])
-                {
-                    dButton[1] = false;
-                    b.BackColor = Color.LightGray;
-                }
-                else
-                {
-                    dButton[1] = true;
-                    b.BackColor = Color.Yellow;
-
-                }
             }
         }
 
@@ -95,14 +104,11 @@ namespace Dice_or_Die
             roll_dice(dice_count);
 
             draw_dice(x: 50, y: 50, count: dice_count);
+        }
 
-
-            //string outp = "";
-            //foreach (var roll in rolls)
-            //{
-            //    outp += roll.ToString() + " ";
-            //}
-            //label1.Text = outp;
+        private void Game_Load(object sender, EventArgs e)
+        {
+            init_dice(dice_count);
         }
     }
 }

@@ -83,6 +83,7 @@
             Controls.Add(rolldice_button);
             Name = "Game";
             Text = "game";
+            Load += Game_Load;
             ResumeLayout(false);
             PerformLayout();
         }
