@@ -1,6 +1,6 @@
 ﻿namespace Dice_or_Die
 {
-    partial class game
+    partial class Game
     {
         /// <summary>
         /// Required designer variable.
