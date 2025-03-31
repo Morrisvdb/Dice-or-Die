@@ -17,6 +17,8 @@ namespace Dice_or_Die
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
         private int dice_count = 5;
+        public int current_player = 1;
+        public int current_round = 1;
 
         public Game()
         {
@@ -128,5 +130,23 @@ namespace Dice_or_Die
         {
             init_dice(dice_count);
         }
-    }
+    
+        private void switch_players()
+        {
+            List<PlayerData> source = new List<PlayerData>();
+
+
+            using (StreamWriter r = new StreamWriter("player" + current_player + ".json"))
+            {
+            }
+        }
+
+        public class PlayerData
+        {
+            public int player_id;
+            public int health;
+            public int money;
+            public int dice_count;
+            public int pending_damage;
+        }
 }
