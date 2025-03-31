@@ -61,12 +61,29 @@ namespace Dice_or_Die
                 b.Size = new Size(size, size);
                 b.Location = new Point(x, y);
                 b.Click += dice_OnClick;
-                b.BackColor = Color.LightGray;
+                if (die.Value.Value)
+                {
+                    b.BackColor = Color.Yellow;
+                } else
+                {
+                    b.BackColor = Color.LightGreen;
+                }
                 current_buttons.Add(b);
                 this.Controls.Add(b);
                 x += size + 10;
             }
 
+
+        }
+
+        public List<int> to_dicerow()
+        {
+            List<int> output = new List<int>(dice.Count());
+            foreach (var die in dice)
+            {
+                output.Add(die.Value.Key);
+            }
+            return output;
         }
 
         private void clear_dice()
@@ -84,7 +101,8 @@ namespace Dice_or_Die
             {
                 KeyValuePair<int, bool> die = dice[b.Name];
                 dice[b.Name] = new KeyValuePair<int, bool>(die.Key, !die.Value);
-                b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
+                //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
+                draw_dice(x: 50, y: 50, count: dice_count);
 
             }
         }
