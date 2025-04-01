@@ -116,19 +116,20 @@ namespace Dice_or_Die
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
-            if (rolls_left <= 0)
-            {
-                return;
-            }
-            rolls_left--;
-            amountrolls_label.Text = rolls_left.ToString();
-            if (rolls_left == 0)
-            {
-                rolldice_button.Enabled = false;
-            }
-            roll_dice(dice_count);
+            switch_players();
+            //if (rolls_left <= 0)
+            //{
+            //    return;
+            //}
+            //rolls_left--;
+            //amountrolls_label.Text = rolls_left.ToString();
+            //if (rolls_left == 0)
+            //{
+            //    rolldice_button.Enabled = false;
+            //}
+            //roll_dice(dice_count);
 
-            draw_dice(x: 50, y: 50, count: dice_count);
+            //draw_dice(x: 50, y: 50, count: dice_count);
         }
 
         private void Game_Load(object sender, EventArgs e)
@@ -138,6 +139,8 @@ namespace Dice_or_Die
 
         private void switch_players()
         {
+            string path = @"C:\Informatica\Dice or Die\player_" + current_player + "_data.json";
+            File.AppendAllText(path, "");
             List<PlayerData> _data = new List<PlayerData>();
 
 
@@ -151,11 +154,11 @@ namespace Dice_or_Die
             });
 
             string json_out = JsonSerializer.Serialize(_data);
-            File.WriteAllText(@"./data/player_" + current_player + "_data.json", json_out);
+            File.WriteAllText(path, json_out);
 
             current_player = current_player == 1 ? 2 : 1;
 
-            string json_in = File.ReadAllText(@"./data/player_" + current_player + "_data.json");
+            string json_in = File.ReadAllText(path);
             List<PlayerData> _data_in = JsonSerializer.Deserialize<List<PlayerData>>(json_in);
 
             current_health = _data_in[0].health;
