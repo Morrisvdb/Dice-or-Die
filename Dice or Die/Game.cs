@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -17,6 +18,11 @@ namespace Dice_or_Die
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
         private int dice_count = 5;
+        public int current_player = 1;
+        public int current_round = 1;
+        public int current_health = 100;
+        public int current_money = 0;
+        public int pending_damage = 0;
 
         public Game()
         {
@@ -64,7 +70,8 @@ namespace Dice_or_Die
                 if (die.Value.Value)
                 {
                     b.BackColor = Color.Yellow;
-                } else
+                }
+                else
                 {
                     b.BackColor = Color.LightGreen;
                 }
@@ -109,24 +116,64 @@ namespace Dice_or_Die
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
-            if (rolls_left <= 0)
-            {
-                return;
-            }
-            rolls_left--;
-            amountrolls_label.Text = rolls_left.ToString();
-            if (rolls_left == 0)
-            {
-                rolldice_button.Enabled = false;
-            }
-            roll_dice(dice_count);
+            switch_players();
+            //if (rolls_left <= 0)
+            //{
+            //    return;
+            //}
+            //rolls_left--;
+            //amountrolls_label.Text = rolls_left.ToString();
+            //if (rolls_left == 0)
+            //{
+            //    rolldice_button.Enabled = false;
+            //}
+            //roll_dice(dice_count);
 
-            draw_dice(x: 50, y: 50, count: dice_count);
+            //draw_dice(x: 50, y: 50, count: dice_count);
         }
 
         private void Game_Load(object sender, EventArgs e)
         {
             init_dice(dice_count);
+        }
+
+        private void switch_players()
+        {
+            string path = @"C:\Informatica\Dice or Die\player_" + current_player + "_data.json";
+            File.AppendAllText(path, "");
+            List<PlayerData> _data = new List<PlayerData>();
+
+
+            _data.Add(new PlayerData
+            {
+                player_id = current_player,
+                health = current_health,
+                money = current_money,
+                dice_count = dice_count,
+                pending_damage = pending_damage
+            });
+
+            string json_out = JsonSerializer.Serialize(_data);
+            File.WriteAllText(path, json_out);
+
+            current_player = current_player == 1 ? 2 : 1;
+
+            string json_in = File.ReadAllText(path);
+            List<PlayerData> _data_in = JsonSerializer.Deserialize<List<PlayerData>>(json_in);
+
+            current_health = _data_in[0].health;
+            current_money = _data_in[0].money;
+            dice_count = _data_in[0].dice_count;
+            pending_damage = _data_in[0].pending_damage;
+        }
+
+        public class PlayerData
+        {
+            public int player_id { get; set; }
+            public int health { get; set; }
+            public int money { get; set; }
+            public int dice_count { get; set; }
+            public int pending_damage { get; set; }
         }
     }
 }
