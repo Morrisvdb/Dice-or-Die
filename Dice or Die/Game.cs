@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -19,6 +20,9 @@ namespace Dice_or_Die
         private int dice_count = 5;
         public int current_player = 1;
         public int current_round = 1;
+        public int current_health = 100;
+        public int current_money = 0;
+        public int pending_damage = 0;
 
         public Game()
         {
@@ -66,7 +70,8 @@ namespace Dice_or_Die
                 if (die.Value.Value)
                 {
                     b.BackColor = Color.Yellow;
-                } else
+                }
+                else
                 {
                     b.BackColor = Color.LightGreen;
                 }
@@ -130,23 +135,42 @@ namespace Dice_or_Die
         {
             init_dice(dice_count);
         }
-    
+
         private void switch_players()
         {
-            List<PlayerData> source = new List<PlayerData>();
+            List<PlayerData> _data = new List<PlayerData>();
 
 
-            using (StreamWriter r = new StreamWriter("player" + current_player + ".json"))
+            _data.Add(new PlayerData
             {
-            }
+                player_id = current_player,
+                health = current_health,
+                money = current_money,
+                dice_count = dice_count,
+                pending_damage = pending_damage
+            });
+
+            string json_out = JsonSerializer.Serialize(_data);
+            File.WriteAllText(@"./data/player_" + current_player + "_data.json", json_out);
+
+            current_player = current_player == 1 ? 2 : 1;
+
+            string json_in = File.ReadAllText(@"./data/player_" + current_player + "_data.json");
+            List<PlayerData> _data_in = JsonSerializer.Deserialize<List<PlayerData>>(json_in);
+
+            current_health = _data_in[0].health;
+            current_money = _data_in[0].money;
+            dice_count = _data_in[0].dice_count;
+            pending_damage = _data_in[0].pending_damage;
         }
 
         public class PlayerData
         {
-            public int player_id;
-            public int health;
-            public int money;
-            public int dice_count;
-            public int pending_damage;
+            public int player_id { get; set; }
+            public int health { get; set; }
+            public int money { get; set; }
+            public int dice_count { get; set; }
+            public int pending_damage { get; set; }
         }
+    }
 }
