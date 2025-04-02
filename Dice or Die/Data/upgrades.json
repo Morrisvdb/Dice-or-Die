@@ -1,0 +1,44 @@
+﻿[
+  {
+    "name": "Survivors Grace",
+    "description": "Heal for 4 points",
+    "cost": 50,
+    "type": "heal",
+    "value": 4
+  },
+  {
+    "name": "Double Strike",
+    "description": "Doubles next outgoing source of damage",
+    "cost": 75,
+    "type": "damage",
+    "value": "2x"
+  },
+  {
+    "name": "Vitality Stone",
+    "description": "Increases max HP by 2 points",
+    "cost": 85,
+    "type": "growth",
+    "value": 2
+  },
+  {
+    "name": "Earth Guard",
+    "description": "Upgrade pair",
+    "cost": 120,
+    "type": "upgrade",
+    "value": "pair-1"
+  },
+  {
+    "name": "Blade of Fate",
+    "description": "Attack your opponent for 3 damage",
+    "cost": 60,
+    "type": "attack",
+    "value": 3
+  },
+  {
+    "name": "The Guardians Barrier",
+    "description": "Blocks all damage for the next 2 turns",
+    "cost": 150,
+    "type": "block",
+    "value": 2
+  }
+]
