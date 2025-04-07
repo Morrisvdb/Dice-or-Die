@@ -21,16 +21,6 @@ namespace Dice_or_Die
         private int dice_count = 5;
         private int roll_count = 3;
         public int current_player = 1;
-        public int current_round = 1;
-        public int current_health = 100;
-        public int current_money = 0;
-        public int pending_damage = 0;
-        public int outgoing_damage = 0;
-        public int max_health = 10;
-        public bool in_shop = false;
-        public int shield = 0;
-        public int grace = 0;
-        public int damage_multiplier = 1;
 
         private int dice_x = 100;
         private int dice_y = 100;
@@ -38,12 +28,14 @@ namespace Dice_or_Die
         public Game()
         {
             InitializeComponent();
-            this.FormClosed += save_on_close;
         }
 
         public class PlayerData
         {
             public int player_id { get; set; }
+            public int round { get; set; } // The round of the game
+            public bool in_shop { get; set; } // Is the player in the shop
+            public bool is_turn { get; set; } // Is it the player's turn. If not, automatically switches players
             public int health { get; set; }
             public int money { get; set; }
             public int dice_count { get; set; }
@@ -53,7 +45,40 @@ namespace Dice_or_Die
             public int shield { get; set; }
             public int grace { get; set; } // How many rounds of 100% damage reduction left
             public int damage_multiplier { get; set; }
+            public int high_roll_level { get; set; } // The level of high roll
+            public int pair_level { get; set; } // The level of pair
+            public int three_of_a_kind_level { get; set; } // The level of three of a kind
+            public int four_of_a_kind_level { get; set; } // The level of four of a kind
+            public int full_house_level { get; set; } // The level of full house
+            public int small_straight_level { get; set; } // The level of small straight
+            public int large_straight_level { get; set; } // The level of large straight
+            public int yathzee_level { get; set; } // The level of yathzee
+            public int used_high_rolls { get; set; } // The number of high rolls used
+            public int used_pairs { get; set; } // The number of pairs used
+            public int used_three_of_a_kinds { get; set; } // The number of three of a kinds used
+            public int used_four_of_a_kinds { get; set; } // The number of four of a kinds used
+            public int used_full_houses { get; set; } // The number of full houses used
+            public int used_small_straights { get; set; } // The number of small straights used
+            public int used_large_straights { get; set; } // The number of large straights used
+            public int used_yathzees { get; set; } // The number of yathzees used
         }
+
+        public PlayerData GetPlayerData(int player_number)
+        {
+            string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + player_number + "_data.json");
+            List<PlayerData> _data = JsonSerializer.Deserialize<List<PlayerData>>(json_);
+            return _data[0];
+        }
+
+        public void commit_player_value(PlayerData data)
+        {
+            string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json");
+            List<PlayerData> _data = JsonSerializer.Deserialize<List<PlayerData>>(json_);
+            _data[0] = data;
+            string json_out = JsonSerializer.Serialize(_data);
+            File.WriteAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json", json_out);
+        }
+
         public class Upgrade
         {
             public required string name { get; set; }
@@ -61,11 +86,6 @@ namespace Dice_or_Die
             public required string description { get; set; }
             public required string type { get; set; }
             public required int value { get; set; }
-        }
-
-        private void save_on_close(object FormClosedEventHandeler, EventArgs e)
-        {
-            save_game();
         }
 
         private void init_dice(int count = 5)
@@ -174,10 +194,13 @@ namespace Dice_or_Die
 
         private void start_shop()
         {
-            in_shop = true;
+            PlayerData _data = GetPlayerData(current_player);
+            _data.in_shop = true;
+            commit_player_value(_data);
+
             gamePanel.Visible = false;
             shopPanel.Visible = true;
-            moneyLabelShop.Text = "Money: " + current_money.ToString();
+            moneyLabelShop.Text = "Money: " + _data.money.ToString();
             populate_shop();
         }
 
@@ -204,32 +227,33 @@ namespace Dice_or_Die
 
         private bool resolve_upgrade(Upgrade upgrade)
         {
-            if (upgrade.cost > current_money)
+            PlayerData _data = GetPlayerData(current_player);
+            if (upgrade.cost > _data.money)
             {
                 return false;
             } else
             {
-                current_money -= upgrade.cost;
+                _data.money -= upgrade.cost;
             }
             switch (upgrade.type)
             {
                 case "heal":
-                    if (current_health + upgrade.value <= max_health)
+                    if (_data.health + upgrade.value <= _data.max_health)
                     {
-                        current_health += upgrade.value;
+                        _data.health += upgrade.value;
                     }
                     else
                     {
-                        current_health = max_health;
+                        _data.health = _data.max_health;
                     }
                     break;
 
                 case "attack":
-                    outgoing_damage += upgrade.value;
+                    _data.outgoing_damage += upgrade.value;
                     break;
 
                 case "damagex":
-                    damage_multiplier += upgrade.value;
+                    _data.outgoing_damage += upgrade.value;
                     break;
 
                 case "block":
@@ -240,15 +264,19 @@ namespace Dice_or_Die
                     break;
             }
 
+            commit_player_value(_data);
             return true;
         }
 
         private void end_shop()
         {
-            in_shop = false;
+            PlayerData _data = GetPlayerData(current_player);
+            _data.in_shop = false;
             gamePanel.Visible = true;
             shopPanel.Visible = false;
             switch_players();
+
+            commit_player_value(_data);
         }
 
         private void Game_Load(object sender, EventArgs e)
@@ -259,8 +287,6 @@ namespace Dice_or_Die
 
         private void switch_players()
         {
-            save_game();
-
             current_player = current_player == 1 ? 2 : 1;
 
             load_game();
@@ -268,62 +294,28 @@ namespace Dice_or_Die
 
         private void load_game()
         {
-            string other_player = current_player == 1 ? "2" : "1";
-            string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + other_player + "_data.json");
-            List<PlayerData> _data = JsonSerializer.Deserialize<List<PlayerData>>(json_);
-            pending_damage = _data[0].outgoing_damage;
-
-
-            string path = @"C:\Informatica\Dice or Die\player_" + current_player + "_data.json";
-            string json_in = File.ReadAllText(path);
-            List<PlayerData> _data_in = JsonSerializer.Deserialize<List<PlayerData>>(json_in);
-            current_health = _data_in[0].health;
-            current_money = _data_in[0].money;
-            dice_count = _data_in[0].dice_count;
-            roll_count = _data_in[0].roll_count;
-            shield = _data_in[0].shield;
-            grace = _data_in[0].grace;
-            damage_multiplier = _data_in[0].damage_multiplier;
-
-            if (_data_in[0].max_health != 0)
+            PlayerData _data = GetPlayerData(current_player);
+            if (!_data.is_turn)
             {
-                max_health = _data_in[0].max_health;
+                PlayerData _data2 = GetPlayerData(current_player == 1 ? 2 : 1);
+                if (_data2.is_turn)
+                {
+                    _data = _data2;
+                    current_player = _data2.player_id;
+
+                } else
+                {
+                    _data.is_turn = true;
+                }
+            }
+            if (_data.in_shop)
+            {
+                start_shop();
             }
             else
             {
-                max_health = 10;
+                end_shop();
             }
-
-            rolls_left = roll_count;
-            amountrolls_label.Text = rolls_left.ToString();
-            healthLabel.Text = "Health: " + current_health.ToString();
-            moneyLabel.Text = "Money: " + current_money.ToString();
-
-        }
-
-        private void save_game()
-        {
-            string path = @"C:\Informatica\Dice or Die\player_" + current_player + "_data.json";
-            File.AppendAllText(path, "");
-            List<PlayerData> _data = new List<PlayerData>();
-
-            _data.Add(new PlayerData
-            {
-                player_id = current_player,
-                health = current_health,
-                money = current_money,
-                dice_count = dice_count,
-                roll_count = roll_count,
-                damage_multiplier = damage_multiplier,
-                max_health = max_health,
-                shield = shield,
-                grace = grace,
-                outgoing_damage = outgoing_damage,
-            });
-
-            string json_out = JsonSerializer.Serialize(_data);
-            File.WriteAllText(path, json_out);
-
         }
 
         private void continueFromShopButton_Click(object sender, EventArgs e)
