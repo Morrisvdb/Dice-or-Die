@@ -1,1 +1,1 @@
-[{"player_id":2,"health":20,"money":0,"dice_count":5,"roll_count":0,"pending_damage":0}]
+[{"player_id":2,"health":20,"money":0,"dice_count":5,"roll_count":0,"outgoing_damage":0,"max_health":10,"shield":0,"grace":0,"damage_multiplier":0}]

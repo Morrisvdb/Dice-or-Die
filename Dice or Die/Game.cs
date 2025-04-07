@@ -32,6 +32,9 @@ namespace Dice_or_Die
         public int grace = 0;
         public int damage_multiplier = 1;
 
+        private int dice_x = 100;
+        private int dice_y = 100;
+
         public Game()
         {
             InitializeComponent();
@@ -145,7 +148,7 @@ namespace Dice_or_Die
                 KeyValuePair<int, bool> die = dice[b.Name];
                 dice[b.Name] = new KeyValuePair<int, bool>(die.Key, !die.Value);
                 //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
-                draw_dice(x: 50, y: 50, count: dice_count);
+                draw_dice(x: dice_x, y: dice_y, count: dice_count);
 
             }
         }
@@ -165,7 +168,8 @@ namespace Dice_or_Die
             }
             roll_dice(dice_count);
 
-            draw_dice(x: 100, y: 100, count: dice_count);
+            draw_dice(x: dice_x, y: dice_y, count: dice_count);
+            
         }
 
         private void start_shop()
@@ -194,12 +198,19 @@ namespace Dice_or_Die
             upgradesBox.Items.Clear();
             foreach (var upgrade in selected_upgrades)
             {
-                upgradesBox.Items.Add(new Upgrade { name = upgrade.name, cost = upgrade.cost, description = upgrade.description, type = upgrade.type, value = upgrade.value });
+                upgradesBox.Items.Add(new Upgrade { name = upgrade.name, cost = upgrade.cost, description = upgrade.name + " (" + upgrade.cost + ")", type = upgrade.type, value = upgrade.value });
             }
         }
 
-        private void resolve_upgrade(Upgrade upgrade)
+        private bool resolve_upgrade(Upgrade upgrade)
         {
+            if (upgrade.cost > current_money)
+            {
+                return false;
+            } else
+            {
+                current_money -= upgrade.cost;
+            }
             switch (upgrade.type)
             {
                 case "heal":
@@ -212,23 +223,24 @@ namespace Dice_or_Die
                         current_health = max_health;
                     }
                     break;
-                case "damage":
-                    int value;
-                    if (int.TryParse(upgrade.value.ToString(), out value))
-                    {
-                        outgoing_damage += value;
-                        break;
-                    }
-                    if (upgrade.value.ToString().Split().Contains("x"))
-                    {
-                        int multiplier = int.Parse(upgrade.value.ToString().Split('x')[0]);
-                        damage_multiplier *= multiplier;
-                        break;
-                    }
 
+                case "attack":
+                    outgoing_damage += upgrade.value;
+                    break;
+
+                case "damagex":
+                    damage_multiplier += upgrade.value;
+                    break;
+
+                case "block":
+                    break;
+
+                case "upgrade-roll":
 
                     break;
             }
+
+            return true;
         }
 
         private void end_shop()
@@ -319,7 +331,7 @@ namespace Dice_or_Die
             end_shop();
         }
 
-        private Upgrade fetch_upgrade(string name = "none")
+        private Upgrade fetch_upgrade(string name)
         {
             string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\upgrades.json";
             string json_in = File.ReadAllText(path);
@@ -331,12 +343,124 @@ namespace Dice_or_Die
                     return upgrade;
                 }
             }
+            if (name == "none")
+            {
+                return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
+            }
             return new Upgrade{ name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
         }
 
         private void buyButton_Click(object sender, EventArgs e)
         {
-            resolve_upgrade(fetch_upgrade(upgradesBox.SelectedValue.ToString()));
+            int selected_index = upgradesBox.SelectedIndex;
+            var selected_value = upgradesBox.SelectedItem;
+
+
+            if (selected_value == null)
+            {
+                MessageBox.Show("Please select an upgrade");
+                return;
+            }
+
+            if (!resolve_upgrade(fetch_upgrade(selected_value.ToString())))
+            {
+                MessageBox.Show("Not enough money");
+            } else
+            {
+                upgradesBox.Items.RemoveAt(selected_index);
+            }
+
         }
+
+        private List<bool> validateroll(List<int> dicerow)
+        {
+            bool full_house = false;
+            bool pair = false;
+            bool three_of_a_kind = false;
+            bool four_of_a_kind = false;
+            bool small_straight = false;
+            bool large_straight = false;
+            bool yathzee = false;
+
+            if ((dicerow[0] == dicerow[1] && dicerow[2] == dicerow[4] && dicerow[0] != dicerow[4]) || ((dicerow[0] == dicerow[2] && dicerow[3] == dicerow[4] && dicerow[0] != dicerow[4])))
+            {
+                full_house = true;
+                pair = true;
+                three_of_a_kind = true;
+            }
+
+            if (dicerow[0] == dicerow[4])
+            {
+                yathzee = true;
+                four_of_a_kind = true;
+                three_of_a_kind = true;
+                pair = true;
+            }
+
+            if ((four_of_a_kind == false) && ((dicerow[0] == dicerow[3]) || (dicerow[1] == dicerow[4])))
+            {
+                four_of_a_kind = true;
+                three_of_a_kind = true;
+                pair = true;
+            }
+
+            if ((three_of_a_kind == false) && ((dicerow[0] == dicerow[2]) || (dicerow[1] == dicerow[3]) || (dicerow[2] == dicerow[4])))
+            {
+                three_of_a_kind = true;
+                pair = true;
+            }
+
+            if ((pair == false) && ((dicerow[0] == dicerow[1]) || (dicerow[1] == dicerow[2]) || (dicerow[2] == dicerow[3]) || (dicerow[3] == dicerow[4])))
+            {
+                pair = true;
+            }
+
+            if ((dicerow[1] == dicerow[0] + 1) && (dicerow[2] == dicerow[1] + 1) && (dicerow[3] == dicerow[2] + 1) && (dicerow[4] == dicerow[3] + 1))
+            {
+                large_straight = true;
+                small_straight = true;
+            }
+
+            if (small_straight == false)
+            {
+                if (((dicerow[0] == dicerow[1] - 1) && (dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1)) || ((dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1) && (dicerow[3] == dicerow[4] - 1)))
+                {
+                    small_straight = true;
+                }
+
+                List<int> small_straight_list = [];
+
+                foreach (int i in dicerow) { small_straight_list.Add(i); }
+
+                if (pair == true)
+                {
+                    if (dicerow[3] == dicerow[4]) { small_straight_list.RemoveAt(3); }
+                    if (dicerow[2] == dicerow[3]) { small_straight_list.RemoveAt(2); }
+                    if (dicerow[1] == dicerow[2]) { small_straight_list.RemoveAt(1); }
+                    if (dicerow[0] == dicerow[1]) { small_straight_list.RemoveAt(0); }
+
+                    if (small_straight_list.Count == 4)
+                    {
+                        if ((small_straight_list[0] == small_straight_list[1] - 1) && (small_straight_list[1] == small_straight_list[2] - 1) && (small_straight_list[2] == small_straight_list[3] - 1))
+                        {
+                            small_straight = true;
+                        }
+                    }
+                }
+            }
+            List<bool> specialrolls = new List<bool>();
+
+            specialrolls.Add(full_house);
+            specialrolls.Add(pair);
+            specialrolls.Add(three_of_a_kind);
+            specialrolls.Add(four_of_a_kind);
+            specialrolls.Add(small_straight);
+            specialrolls.Add(large_straight);
+            specialrolls.Add(yathzee);
+
+            return specialrolls;
+
+        }
+
     }
 }

@@ -30,7 +30,6 @@
         {
             continueFromShopButton = new Button();
             amountrolls_label = new Label();
-            label1 = new Label();
             rollsleft_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
@@ -63,15 +62,6 @@
             amountrolls_label.TabIndex = 7;
             amountrolls_label.Text = "3";
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(105, 231);
-            label1.Name = "label1";
-            label1.Size = new Size(50, 20);
-            label1.TabIndex = 8;
-            label1.Text = "label1";
-            // 
             // rollsleft_label
             // 
             rollsleft_label.AutoSize = true;
@@ -100,7 +90,6 @@
             gamePanel.Controls.Add(rolldice_button);
             gamePanel.Controls.Add(amountrolls_label);
             gamePanel.Controls.Add(rollsleft_label);
-            gamePanel.Controls.Add(label1);
             gamePanel.Location = new Point(12, 12);
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 281);
@@ -186,7 +175,6 @@
         #endregion
         private Button continueFromShopButton;
         private Label amountrolls_label;
-        private Label label1;
         private Label rollsleft_label;
         private Button rolldice_button;
         private Panel gamePanel;
