@@ -30,12 +30,13 @@
         {
             continueFromShopButton = new Button();
             amountrolls_label = new Label();
-            rollsleft_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            currentPlayerLabel = new Label();
             moneyLabel = new Label();
             healthLabel = new Label();
             shopPanel = new Panel();
+            currentPlayerLabelShop = new Label();
             buyButton = new Button();
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
@@ -62,15 +63,6 @@
             amountrolls_label.TabIndex = 7;
             amountrolls_label.Text = "3";
             // 
-            // rollsleft_label
-            // 
-            rollsleft_label.AutoSize = true;
-            rollsleft_label.Location = new Point(290, 225);
-            rollsleft_label.Name = "rollsleft_label";
-            rollsleft_label.Size = new Size(66, 20);
-            rollsleft_label.TabIndex = 6;
-            rollsleft_label.Text = "rolls left:";
-            // 
             // rolldice_button
             // 
             rolldice_button.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
@@ -85,15 +77,25 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(currentPlayerLabel);
             gamePanel.Controls.Add(moneyLabel);
             gamePanel.Controls.Add(healthLabel);
             gamePanel.Controls.Add(rolldice_button);
             gamePanel.Controls.Add(amountrolls_label);
-            gamePanel.Controls.Add(rollsleft_label);
             gamePanel.Location = new Point(12, 12);
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 281);
             gamePanel.TabIndex = 9;
+            // 
+            // currentPlayerLabel
+            // 
+            currentPlayerLabel.AutoSize = true;
+            currentPlayerLabel.Font = new Font("Segoe UI", 15F);
+            currentPlayerLabel.Location = new Point(159, 3);
+            currentPlayerLabel.Name = "currentPlayerLabel";
+            currentPlayerLabel.Size = new Size(183, 35);
+            currentPlayerLabel.TabIndex = 11;
+            currentPlayerLabel.Text = "Current Player: ";
             // 
             // moneyLabel
             // 
@@ -115,6 +117,7 @@
             // 
             // shopPanel
             // 
+            shopPanel.Controls.Add(currentPlayerLabelShop);
             shopPanel.Controls.Add(buyButton);
             shopPanel.Controls.Add(moneyLabelShop);
             shopPanel.Controls.Add(upgradesBox);
@@ -124,6 +127,16 @@
             shopPanel.Size = new Size(452, 281);
             shopPanel.TabIndex = 10;
             shopPanel.Visible = false;
+            // 
+            // currentPlayerLabelShop
+            // 
+            currentPlayerLabelShop.AutoSize = true;
+            currentPlayerLabelShop.Font = new Font("Segoe UI", 15F);
+            currentPlayerLabelShop.Location = new Point(139, 3);
+            currentPlayerLabelShop.Name = "currentPlayerLabelShop";
+            currentPlayerLabelShop.Size = new Size(183, 35);
+            currentPlayerLabelShop.TabIndex = 12;
+            currentPlayerLabelShop.Text = "Current Player: ";
             // 
             // buyButton
             // 
@@ -175,7 +188,6 @@
         #endregion
         private Button continueFromShopButton;
         private Label amountrolls_label;
-        private Label rollsleft_label;
         private Button rolldice_button;
         private Panel gamePanel;
         private Panel shopPanel;
@@ -184,5 +196,7 @@
         private Label moneyLabelShop;
         private ListBox upgradesBox;
         private Button buyButton;
+        private Label currentPlayerLabel;
+        private Label currentPlayerLabelShop;
     }
 }

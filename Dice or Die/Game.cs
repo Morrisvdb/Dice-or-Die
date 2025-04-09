@@ -10,20 +10,18 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dice_or_Die
 {
     public partial class Game : Form
     {
-        public int rolls_left = 3;
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
-        private int dice_count = 5;
-        private int roll_count = 3;
         public int current_player = 1;
 
-        private int dice_x = 100;
-        private int dice_y = 100;
+        private const int dice_x = 100;
+        private const int dice_y = 100;
 
         public Game()
         {
@@ -32,49 +30,63 @@ namespace Dice_or_Die
 
         public class PlayerData
         {
-            public int player_id { get; set; }
-            public int round { get; set; } // The round of the game
-            public bool in_shop { get; set; } // Is the player in the shop
-            public bool is_turn { get; set; } // Is it the player's turn. If not, automatically switches players
-            public int health { get; set; }
-            public int money { get; set; }
-            public int dice_count { get; set; }
-            public int roll_count { get; set; }
-            public int outgoing_damage { get; set; }
-            public int max_health { get; set; }
-            public int shield { get; set; }
-            public int grace { get; set; } // How many rounds of 100% damage reduction left
-            public int damage_multiplier { get; set; }
-            public int high_roll_level { get; set; } // The level of high roll
-            public int pair_level { get; set; } // The level of pair
-            public int three_of_a_kind_level { get; set; } // The level of three of a kind
-            public int four_of_a_kind_level { get; set; } // The level of four of a kind
-            public int full_house_level { get; set; } // The level of full house
-            public int small_straight_level { get; set; } // The level of small straight
-            public int large_straight_level { get; set; } // The level of large straight
-            public int yathzee_level { get; set; } // The level of yathzee
-            public int used_high_rolls { get; set; } // The number of high rolls used
-            public int used_pairs { get; set; } // The number of pairs used
-            public int used_three_of_a_kinds { get; set; } // The number of three of a kinds used
-            public int used_four_of_a_kinds { get; set; } // The number of four of a kinds used
-            public int used_full_houses { get; set; } // The number of full houses used
-            public int used_small_straights { get; set; } // The number of small straights used
-            public int used_large_straights { get; set; } // The number of large straights used
-            public int used_yathzees { get; set; } // The number of yathzees used
+            public int player_id { get; set; } = 1;
+            public int round { get; set; } = 0; // The round of the game
+            public bool in_shop { get; set; } = false; // Is the player in the shop
+            public bool is_turn { get; set; } = false; // Is it the player's turn. If not, automatically switches players
+            public int health { get; set; } = 10; // The health of the player
+            public int money { get; set; } = 0; // The amount of money that the player has
+            public int dice_count { get; set; } = 5; // The amount of dice the player has
+            public int roll_count { get; set; } = 0; // The amount of rolls the player has made this round
+            public int max_rolls { get; set; } = 3; // The maximum number of rolls the player can make
+            public int outgoing_damage { get; set; } = 0; // The amount of damage that will be delt to the opponent at the end of their turn
+            public int max_health { get; set; } = 10; // The maximum health of the player
+            public int shield { get; set; } = 0; // The amount of damage that will be blocked
+            public int grace { get; set; } = 0; // How many rounds of 100% damage reduction left
+            public int damage_multiplier { get; set; } = 1; // The amount of damage that will be multiplied by the player (default 1)
+            public int high_roll_level { get; set; } = 0; // The level of high roll
+            public int pair_level { get; set; } = 0; // The level of pair
+            public int three_of_a_kind_level { get; set; } = 0; // The level of three of a kind
+            public int four_of_a_kind_level { get; set; } = 0; // The level of four of a kind
+            public int full_house_level { get; set; } = 0; // The level of full house
+            public int small_straight_level { get; set; } = 0; // The level of small straight
+            public int large_straight_level { get; set; } = 0; // The level of large straight
+            public int yathzee_level { get; set; } = 0; // The level of yathzee
+            public int used_high_rolls { get; set; } = 0; // The number of high rolls used
+            public int used_pairs { get; set; } = 0; // The number of pairs used
+            public int used_three_of_a_kinds { get; set; } = 0; // The number of three of a kinds used
+            public int used_four_of_a_kinds { get; set; } = 0; // The number of four of a kinds used
+            public int used_full_houses { get; set; } = 0; // The number of full houses used
+            public int used_small_straights { get; set; } = 0; // The number of small straights used
+            public int used_large_straights { get; set; } = 0; // The number of large straights used
+            public int used_yathzees { get; set; } = 0; // The number of yathzees used
         }
 
         public PlayerData GetPlayerData(int player_number)
         {
-            string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + player_number + "_data.json");
-            List<PlayerData> _data = JsonSerializer.Deserialize<List<PlayerData>>(json_);
-            return _data[0];
+            string path = @"C:\Informatica\Dice or Die\player_" + player_number + "_data.json";
+            if (!File.Exists(path))
+            {
+                PlayerData _data = new PlayerData();
+                string json_out = JsonSerializer.Serialize(_data);
+                File.Create(path).Close();
+                File.WriteAllText(path, json_out);
+                return new PlayerData();
+            }
+            else
+            {
+                string json_ = File.ReadAllText(path);
+                PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
+
+                return _data;
+            }
         }
 
         public void commit_player_value(PlayerData data)
         {
             string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json");
-            List<PlayerData> _data = JsonSerializer.Deserialize<List<PlayerData>>(json_);
-            _data[0] = data;
+            PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
+            _data = data;
             string json_out = JsonSerializer.Serialize(_data);
             File.WriteAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json", json_out);
         }
@@ -90,6 +102,7 @@ namespace Dice_or_Die
 
         private void init_dice(int count = 5)
         {
+            dice.Clear();
             for (int i = 0; i < count; i++)
             {
                 dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(0, false));
@@ -165,31 +178,34 @@ namespace Dice_or_Die
         {
             if (sender is Button b)
             {
+                PlayerData data_ = GetPlayerData(current_player);
                 KeyValuePair<int, bool> die = dice[b.Name];
                 dice[b.Name] = new KeyValuePair<int, bool>(die.Key, !die.Value);
                 //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
-                draw_dice(x: dice_x, y: dice_y, count: dice_count);
+                draw_dice(x: dice_x, y: dice_y, count: data_.dice_count);
 
             }
         }
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
-            if (rolls_left <= 0)
+            PlayerData data_ = GetPlayerData(current_player);
+            if (data_.roll_count >= data_.max_rolls)
             {
                 start_shop();
                 return;
             }
-            rolls_left--;
-            amountrolls_label.Text = rolls_left.ToString();
-            if (rolls_left == 0)
+            data_.roll_count++;
+            amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+            if (data_.roll_count == data_.max_rolls)
             {
                 rolldice_button.Text = "Shop";
             }
-            roll_dice(dice_count);
+            roll_dice(data_.dice_count);
 
-            draw_dice(x: dice_x, y: dice_y, count: dice_count);
-            
+            draw_dice(x: dice_x, y: dice_y, count: data_.dice_count);
+
+            commit_player_value(data_);
         }
 
         private void start_shop()
@@ -201,6 +217,7 @@ namespace Dice_or_Die
             gamePanel.Visible = false;
             shopPanel.Visible = true;
             moneyLabelShop.Text = "Money: " + _data.money.ToString();
+            currentPlayerLabelShop.Text = "Current Player: " + _data.player_id.ToString();
             populate_shop();
         }
 
@@ -231,7 +248,8 @@ namespace Dice_or_Die
             if (upgrade.cost > _data.money)
             {
                 return false;
-            } else
+            }
+            else
             {
                 _data.money -= upgrade.cost;
             }
@@ -274,22 +292,48 @@ namespace Dice_or_Die
             _data.in_shop = false;
             gamePanel.Visible = true;
             shopPanel.Visible = false;
-            switch_players();
+            _data.roll_count = 0;
 
             commit_player_value(_data);
+            switch_players();
+
         }
 
         private void Game_Load(object sender, EventArgs e)
         {
-            init_dice(dice_count);
+            PlayerData data_ = GetPlayerData(current_player);
+            init_dice(data_.dice_count);
             load_game();
         }
 
         private void switch_players()
         {
+            PlayerData data_ = GetPlayerData(current_player);
+            data_.is_turn = false;
             current_player = current_player == 1 ? 2 : 1;
+            PlayerData data_2 = GetPlayerData(current_player);
+            data_2.is_turn = true;
+            commit_player_value(data_);
+            commit_player_value(data_2);
 
             load_game();
+        }
+
+        private void init_game()
+        {
+            PlayerData data_ = GetPlayerData(current_player);
+            gamePanel.Visible = true;
+            shopPanel.Visible = false;
+            amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+            currentPlayerLabel.Text = "Current Player: " + data_.player_id.ToString();
+            rolldice_button.Text = "Roll";
+            moneyLabel.Text = "Money: " + data_.money.ToString();
+            healthLabel.Text = "Health: " + data_.health.ToString();
+            int t = data_.player_id;
+
+            clear_dice();
+            init_dice(data_.dice_count);
+
         }
 
         private void load_game()
@@ -302,19 +346,23 @@ namespace Dice_or_Die
                 {
                     _data = _data2;
                     current_player = _data2.player_id;
+                    commit_player_value(_data2);
 
-                } else
+                }
+                else
                 {
                     _data.is_turn = true;
                 }
             }
+            current_player = _data.player_id;
+            commit_player_value(_data);
             if (_data.in_shop)
             {
                 start_shop();
             }
             else
             {
-                end_shop();
+                init_game();
             }
         }
 
@@ -339,7 +387,7 @@ namespace Dice_or_Die
             {
                 return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
             }
-            return new Upgrade{ name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
+            return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
         }
 
         private void buyButton_Click(object sender, EventArgs e)
@@ -357,7 +405,8 @@ namespace Dice_or_Die
             if (!resolve_upgrade(fetch_upgrade(selected_value.ToString())))
             {
                 MessageBox.Show("Not enough money");
-            } else
+            }
+            else
             {
                 upgradesBox.Items.RemoveAt(selected_index);
             }
@@ -453,6 +502,5 @@ namespace Dice_or_Die
             return specialrolls;
 
         }
-
     }
 }
