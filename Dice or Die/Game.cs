@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Dice_or_Die
         private List<Button> current_buttons = new List<Button>();
         public int current_player = 1;
 
-        private const int dice_x = 100;
+        private const int dice_x = CallConvThiscall;
         private const int dice_y = 100;
 
         public Game()
@@ -67,7 +68,7 @@ namespace Dice_or_Die
             string path = @"C:\Informatica\Dice or Die\player_" + player_number + "_data.json";
             if (!File.Exists(path))
             {
-                PlayerData _data = new PlayerData();
+                PlayerData _data = new PlayerData { player_id = player_number };
                 string json_out = JsonSerializer.Serialize(_data);
                 File.Create(path).Close();
                 File.WriteAllText(path, json_out);
@@ -182,7 +183,9 @@ namespace Dice_or_Die
                 KeyValuePair<int, bool> die = dice[b.Name];
                 dice[b.Name] = new KeyValuePair<int, bool>(die.Key, !die.Value);
                 //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
-                draw_dice(x: dice_x, y: dice_y, count: data_.dice_count);
+                int x = diceLabel.Location.X;
+                int y = diceLabel.Location.Y;
+                draw_dice(x: x, y: y, count: data_.dice_count);
 
             }
         }

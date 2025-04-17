@@ -32,6 +32,7 @@
             amountrolls_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            diceLabel = new Label();
             currentPlayerLabel = new Label();
             moneyLabel = new Label();
             healthLabel = new Label();
@@ -77,6 +78,7 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(diceLabel);
             gamePanel.Controls.Add(currentPlayerLabel);
             gamePanel.Controls.Add(moneyLabel);
             gamePanel.Controls.Add(healthLabel);
@@ -86,6 +88,16 @@
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 281);
             gamePanel.TabIndex = 9;
+            // 
+            // diceLabel
+            // 
+            diceLabel.AutoSize = true;
+            diceLabel.Location = new Point(120, 120);
+            diceLabel.Name = "diceLabel";
+            diceLabel.Size = new Size(138, 20);
+            diceLabel.TabIndex = 12;
+            diceLabel.Text = "hidden for dice pos";
+            diceLabel.Visible = false;
             // 
             // currentPlayerLabel
             // 
@@ -198,5 +210,6 @@
         private Button buyButton;
         private Label currentPlayerLabel;
         private Label currentPlayerLabelShop;
+        private Label diceLabel;
     }
 }
