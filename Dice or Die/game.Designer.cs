@@ -41,6 +41,7 @@
             buyButton = new Button();
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
+            rollBox = new ListBox();
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
             SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(rollBox);
             gamePanel.Controls.Add(diceLabel);
             gamePanel.Controls.Add(currentPlayerLabel);
             gamePanel.Controls.Add(moneyLabel);
@@ -92,7 +94,7 @@
             // diceLabel
             // 
             diceLabel.AutoSize = true;
-            diceLabel.Location = new Point(120, 120);
+            diceLabel.Location = new Point(159, 90);
             diceLabel.Name = "diceLabel";
             diceLabel.Size = new Size(138, 20);
             diceLabel.TabIndex = 12;
@@ -179,6 +181,14 @@
             upgradesBox.TabIndex = 1;
             upgradesBox.ValueMember = "name";
             // 
+            // rollBox
+            // 
+            rollBox.FormattingEnabled = true;
+            rollBox.Location = new Point(3, 103);
+            rollBox.Name = "rollBox";
+            rollBox.Size = new Size(104, 124);
+            rollBox.TabIndex = 13;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -211,5 +221,6 @@
         private Label currentPlayerLabel;
         private Label currentPlayerLabelShop;
         private Label diceLabel;
+        private ListBox rollBox;
     }
 }
