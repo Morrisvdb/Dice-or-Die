@@ -222,7 +222,9 @@ namespace Dice_or_Die
             }
             roll_dice(data_.dice_count);
 
-            draw_dice(x: dice_x, y: dice_y, count: data_.dice_count);
+            draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
+
+            fill_rollbox();
 
             commit_player_value(data_);
         }
@@ -258,6 +260,18 @@ namespace Dice_or_Die
             foreach (var upgrade in selected_upgrades)
             {
                 upgradesBox.Items.Add(new Upgrade { name = upgrade.name, cost = upgrade.cost, description = upgrade.name + " (" + upgrade.cost + ")", type = upgrade.type, value = upgrade.value });
+            }
+        }
+
+        private void fill_rollbox()
+        {
+            // TODO: Clear box
+            List<int> dicerow = to_dicerow();
+            List<string> rolls = validateroll(dicerow);
+
+            foreach (var roll in rolls)
+            {
+                rollBox.Items.Add(roll);
             }
         }
 
@@ -432,8 +446,26 @@ namespace Dice_or_Die
 
         }
 
-        private List<bool> validateroll(List<int> dicerow)
+        private List<string> add_if_not_exists(List<string> list, string item)
         {
+            if (item == null)
+            {
+                return list;
+            }
+
+            if (!list.Contains(item))
+            {
+                list.Add(item);
+                return list;
+            }
+
+
+            return list;
+        }
+
+        private List<string> validateroll(List<int> dicerow)
+        {
+            List<string> rolls = new List<string>();
             bool full_house = false;
             bool pair = false;
             bool three_of_a_kind = false;
@@ -444,6 +476,9 @@ namespace Dice_or_Die
 
             if ((dicerow[0] == dicerow[1] && dicerow[2] == dicerow[4] && dicerow[0] != dicerow[4]) || ((dicerow[0] == dicerow[2] && dicerow[3] == dicerow[4] && dicerow[0] != dicerow[4])))
             {
+                rolls = add_if_not_exists(rolls, "full_house");
+                rolls = add_if_not_exists(rolls, "pair");
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
                 full_house = true;
                 pair = true;
                 three_of_a_kind = true;
@@ -451,6 +486,10 @@ namespace Dice_or_Die
 
             if (dicerow[0] == dicerow[4])
             {
+                rolls = add_if_not_exists(rolls, "yathzee");
+                rolls = add_if_not_exists(rolls, "four_of_a_kind");
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
+                rolls = add_if_not_exists(rolls, "pair");
                 yathzee = true;
                 four_of_a_kind = true;
                 three_of_a_kind = true;
@@ -459,6 +498,9 @@ namespace Dice_or_Die
 
             if ((four_of_a_kind == false) && ((dicerow[0] == dicerow[3]) || (dicerow[1] == dicerow[4])))
             {
+                rolls = add_if_not_exists(rolls, "four_of_a_kind");
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
+                rolls = add_if_not_exists(rolls, "pair");
                 four_of_a_kind = true;
                 three_of_a_kind = true;
                 pair = true;
@@ -466,25 +508,31 @@ namespace Dice_or_Die
 
             if ((three_of_a_kind == false) && ((dicerow[0] == dicerow[2]) || (dicerow[1] == dicerow[3]) || (dicerow[2] == dicerow[4])))
             {
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
+                rolls = add_if_not_exists(rolls, "pair");
                 three_of_a_kind = true;
                 pair = true;
             }
 
             if ((pair == false) && ((dicerow[0] == dicerow[1]) || (dicerow[1] == dicerow[2]) || (dicerow[2] == dicerow[3]) || (dicerow[3] == dicerow[4])))
             {
+                rolls = add_if_not_exists(rolls, "pair");
                 pair = true;
             }
 
             if ((dicerow[1] == dicerow[0] + 1) && (dicerow[2] == dicerow[1] + 1) && (dicerow[3] == dicerow[2] + 1) && (dicerow[4] == dicerow[3] + 1))
             {
-                large_straight = true;
+                rolls = add_if_not_exists(rolls, "small_straight");
+                rolls = add_if_not_exists(rolls, "large_straight");
                 small_straight = true;
+                large_straight = true;
             }
 
             if (small_straight == false)
             {
                 if (((dicerow[0] == dicerow[1] - 1) && (dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1)) || ((dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1) && (dicerow[3] == dicerow[4] - 1)))
                 {
+                    rolls = add_if_not_exists(rolls, "small_straight");
                     small_straight = true;
                 }
 
@@ -503,22 +551,14 @@ namespace Dice_or_Die
                     {
                         if ((small_straight_list[0] == small_straight_list[1] - 1) && (small_straight_list[1] == small_straight_list[2] - 1) && (small_straight_list[2] == small_straight_list[3] - 1))
                         {
+                            rolls = add_if_not_exists(rolls, "small_straight");
                             small_straight = true;
                         }
                     }
                 }
             }
-            List<bool> specialrolls = new List<bool>();
 
-            specialrolls.Add(full_house);
-            specialrolls.Add(pair);
-            specialrolls.Add(three_of_a_kind);
-            specialrolls.Add(four_of_a_kind);
-            specialrolls.Add(small_straight);
-            specialrolls.Add(large_straight);
-            specialrolls.Add(yathzee);
-
-            return specialrolls;
+            return rolls;
 
         }
 
