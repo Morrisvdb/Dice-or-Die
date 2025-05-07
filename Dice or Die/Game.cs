@@ -21,6 +21,9 @@ namespace Dice_or_Die
         private List<Button> current_buttons = new List<Button>();
         public int current_player = 1;
 
+        private const int dice_x = 100;
+        private const int dice_y = 100;
+
         public Game()
         {
             InitializeComponent();
@@ -87,6 +90,22 @@ namespace Dice_or_Die
             _data = data;
             string json_out = JsonSerializer.Serialize(_data);
             File.WriteAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json", json_out);
+        }
+
+        public void reset_save()
+        {
+            for (int i = 1; i < 3; i++)
+            {
+                string path = @"C:\Informatica\Dice or Die\player_" + i + "_data.json";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                PlayerData _data = new PlayerData { player_id = current_player };
+                string json_out = JsonSerializer.Serialize(_data);
+                File.Create(path).Close();
+                File.WriteAllText(path, json_out);
+            }
         }
 
         public class Upgrade
@@ -541,6 +560,13 @@ namespace Dice_or_Die
 
             return rolls;
 
+        }
+
+        private void returnToMenuButton_Click(object sender, EventArgs e)
+        {
+            Menu menu = new Menu();
+            menu.Show();
+            this.Hide();
         }
     }
 }
