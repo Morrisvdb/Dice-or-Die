@@ -32,6 +32,7 @@
             helpButton = new Button();
             quitButton = new Button();
             settingsButton = new Button();
+            resetGameButton = new Button();
             SuspendLayout();
             // 
             // playButton
@@ -46,7 +47,7 @@
             // 
             // helpButton
             // 
-            helpButton.Location = new Point(353, 160);
+            helpButton.Location = new Point(353, 195);
             helpButton.Name = "helpButton";
             helpButton.Size = new Size(94, 29);
             helpButton.TabIndex = 1;
@@ -56,7 +57,7 @@
             // 
             // quitButton
             // 
-            quitButton.Location = new Point(353, 195);
+            quitButton.Location = new Point(353, 230);
             quitButton.Name = "quitButton";
             quitButton.Size = new Size(94, 29);
             quitButton.TabIndex = 2;
@@ -74,11 +75,22 @@
             settingsButton.UseVisualStyleBackColor = true;
             settingsButton.Click += settingsButton_Click;
             // 
+            // resetGameButton
+            // 
+            resetGameButton.Location = new Point(353, 160);
+            resetGameButton.Name = "resetGameButton";
+            resetGameButton.Size = new Size(94, 29);
+            resetGameButton.TabIndex = 4;
+            resetGameButton.Text = "Reset";
+            resetGameButton.UseVisualStyleBackColor = true;
+            resetGameButton.Click += resetGameButton_Click;
+            // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(resetGameButton);
             Controls.Add(settingsButton);
             Controls.Add(quitButton);
             Controls.Add(helpButton);
@@ -94,5 +106,6 @@
         private Button helpButton;
         private Button quitButton;
         private Button settingsButton;
+        private Button resetGameButton;
     }
 }

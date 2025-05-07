@@ -28,5 +28,12 @@ namespace Dice_or_Die
         {
             Application.Exit();
         }
+
+        private void resetGameButton_Click(object sender, EventArgs e)
+        {
+            Game game = new Game();
+            game.reset_save();
+
+        }
     }
 }

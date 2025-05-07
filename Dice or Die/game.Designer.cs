@@ -41,6 +41,7 @@
             buyButton = new Button();
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
+            returnToMenuButton = new Button();
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
             SuspendLayout();
@@ -84,7 +85,7 @@
             gamePanel.Controls.Add(healthLabel);
             gamePanel.Controls.Add(rolldice_button);
             gamePanel.Controls.Add(amountrolls_label);
-            gamePanel.Location = new Point(12, 12);
+            gamePanel.Location = new Point(12, 27);
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 281);
             gamePanel.TabIndex = 9;
@@ -134,7 +135,7 @@
             shopPanel.Controls.Add(moneyLabelShop);
             shopPanel.Controls.Add(upgradesBox);
             shopPanel.Controls.Add(continueFromShopButton);
-            shopPanel.Location = new Point(528, 12);
+            shopPanel.Location = new Point(528, 27);
             shopPanel.Name = "shopPanel";
             shopPanel.Size = new Size(452, 281);
             shopPanel.TabIndex = 10;
@@ -179,11 +180,22 @@
             upgradesBox.TabIndex = 1;
             upgradesBox.ValueMember = "name";
             // 
+            // returnToMenuButton
+            // 
+            returnToMenuButton.Location = new Point(12, 3);
+            returnToMenuButton.Name = "returnToMenuButton";
+            returnToMenuButton.Size = new Size(94, 29);
+            returnToMenuButton.TabIndex = 11;
+            returnToMenuButton.Text = "Menu";
+            returnToMenuButton.UseVisualStyleBackColor = true;
+            returnToMenuButton.Click += returnToMenuButton_Click;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1435, 391);
+            Controls.Add(returnToMenuButton);
             Controls.Add(shopPanel);
             Controls.Add(gamePanel);
             Margin = new Padding(3, 4, 3, 4);
@@ -211,5 +223,6 @@
         private Label currentPlayerLabel;
         private Label currentPlayerLabelShop;
         private Label diceLabel;
+        private Button returnToMenuButton;
     }
 }
