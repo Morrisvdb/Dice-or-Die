@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
@@ -29,6 +30,15 @@ namespace Dice_or_Die
             InitializeComponent();
         }
 
+        private class Roll
+        {
+            public string name { get; set; } = "none"; // The name of the roll
+            public string title { get; set; } = "none"; // The title of the roll
+            public int level { get; set; } = 0; // The level of the roll
+            public string effect_type { get; set; } = "none"; // The type of the effect
+            public int value { get; set; } = 0; // The value of the effect
+        }
+
         public class PlayerData
         {
             public int player_id { get; set; } = 1;
@@ -36,7 +46,7 @@ namespace Dice_or_Die
             public bool in_shop { get; set; } = false; // Is the player in the shop
             public bool is_turn { get; set; } = false; // Is it the player's turn. If not, automatically switches players
             public int health { get; set; } = 10; // The health of the player
-            public int money { get; set; } = 0; // The amount of money that the player has
+            public int money { get; set; } // The amount of money that the player has
             public int dice_count { get; set; } = 5; // The amount of dice the player has
             public int roll_count { get; set; } = 0; // The amount of rolls the player has made this round
             public int max_rolls { get; set; } = 3; // The maximum number of rolls the player can make
@@ -61,6 +71,13 @@ namespace Dice_or_Die
             public int used_small_straights { get; set; } = 0; // The number of small straights used
             public int used_large_straights { get; set; } = 0; // The number of large straights used
             public int used_yathzees { get; set; } = 0; // The number of yathzees used
+            public int aces_value { get; set; } = 0; // The value of the aces   
+            public int twos_value { get; set; } = 0; // The value of the twos
+            public int threes_value { get; set; } = 0; // The value of the threes
+            public int fours_value { get; set; } = 0; // The value of the fours
+            public int fives_value { get; set; } = 0; // The value of the fives
+            public int sixes_value { get; set; } = 0; // The value of the sixes
+
         }
 
         public PlayerData GetPlayerData(int player_number)
@@ -101,7 +118,7 @@ namespace Dice_or_Die
                 {
                     File.Delete(path);
                 }
-                PlayerData _data = new PlayerData { player_id = current_player };
+                PlayerData _data = new PlayerData { player_id = i };
                 string json_out = JsonSerializer.Serialize(_data);
                 File.Create(path).Close();
                 File.WriteAllText(path, json_out);
@@ -113,7 +130,7 @@ namespace Dice_or_Die
             public required string name { get; set; }
             public required int cost { get; set; }
             public required string description { get; set; }
-            public required string type { get; set; }
+            public required string upgrade_type { get; set; }
             public required int value { get; set; }
         }
 
@@ -122,7 +139,7 @@ namespace Dice_or_Die
             dice.Clear();
             for (int i = 0; i < count; i++)
             {
-                dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(0, false));
+                dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(-1, false));
             }
         }
 
@@ -177,8 +194,13 @@ namespace Dice_or_Die
             List<int> output = new List<int>(dice.Count());
             foreach (var die in dice)
             {
+                if (die.Value.Key == -1)
+                {
+                    continue;
+                }
                 output.Add(die.Value.Key);
             }
+            output.Sort();
             return output;
         }
 
@@ -208,9 +230,17 @@ namespace Dice_or_Die
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
+            int coins = 0;
             PlayerData data_ = GetPlayerData(current_player);
             if (data_.roll_count >= data_.max_rolls)
             {
+                //int coins = 0;
+                foreach (var die in dice)
+                {
+                    coins += die.Value.Key;
+                }
+                data_.money += coins;
+                commit_player_value(data_);
                 start_shop();
                 return;
             }
@@ -218,13 +248,26 @@ namespace Dice_or_Die
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
             if (data_.roll_count == data_.max_rolls)
             {
+                foreach (var die in dice)
+                {
+                    coins += die.Value.Key;
+                }
+                payoutLabel.Visible = true;
+                payoutLabel.Text = "Payout: " + coins.ToString() + "$";
                 rolldice_button.Text = "Shop";
             }
             roll_dice(data_.dice_count);
 
             draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
 
-            fill_rollbox();
+            if (!switchSectionTick.Checked)
+            {
+                fill_rollbox_bottom();
+            }
+            else
+            {
+                fill_rollbox_top();
+            }
 
             commit_player_value(data_);
         }
@@ -232,12 +275,16 @@ namespace Dice_or_Die
         private void start_shop()
         {
             PlayerData _data = GetPlayerData(current_player);
+            PlayerData _data2 = GetPlayerData(current_player == 1 ? 2 : 1);
             _data.in_shop = true;
             commit_player_value(_data);
 
             gamePanel.Visible = false;
             shopPanel.Visible = true;
             moneyLabelShop.Text = "Money: " + _data.money.ToString();
+            healthLabelShop.Text = "Health: " + _data.health.ToString();
+            attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
+            incomingDamageLabelShop.Text = "Incoming Damage: " + _data2.outgoing_damage.ToString();
             currentPlayerLabelShop.Text = "Current Player: " + _data.player_id.ToString();
             populate_shop();
         }
@@ -259,19 +306,63 @@ namespace Dice_or_Die
             upgradesBox.Items.Clear();
             foreach (var upgrade in selected_upgrades)
             {
-                upgradesBox.Items.Add(new Upgrade { name = upgrade.name, cost = upgrade.cost, description = upgrade.name + " (" + upgrade.cost + ")", type = upgrade.type, value = upgrade.value });
+                upgrade.description += " (" + upgrade.cost + ")";
+                upgradesBox.Items.Add(upgrade);
             }
         }
 
-        private void fill_rollbox()
+        private Roll fetch_roll(string name)
         {
-            // TODO: Clear box
+            string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\rolls.json";
+            string json_in = File.ReadAllText(path);
+            List<Roll> _data = JsonSerializer.Deserialize<List<Roll>>(json_in);
+            foreach (var roll in _data)
+            {
+                if (roll.name == name)
+                {
+                    return roll;
+                }
+            }
+            if (name == "none")
+            {
+                return new Roll { name = "error", title = "HELP, SOMETHING IS VERY WRONG" };
+            }
+            return new Roll { name = "error", title = "HELP, SOMETHING IS VERY WRONG" };
+
+        }
+
+        private void fill_rollbox_bottom()
+        {
+            rollBox.Items.Clear();
             List<int> dicerow = to_dicerow();
             List<string> rolls = validateroll(dicerow);
 
             foreach (var roll in rolls)
             {
-                rollBox.Items.Add(roll);
+                Roll roll_obj = fetch_roll(roll);
+                rollBox.Items.Add(roll_obj);
+            }
+            if (rollBox.Items.Count > 0)
+            {
+                useDiceButton.Enabled = true;
+            }
+            else
+            {
+                useDiceButton.Enabled = false;
+            }
+        }
+
+        private void fill_rollbox_top()
+        {
+            rollBox.Items.Clear();
+
+            if (rollBox.Items.Count > 0)
+            {
+                useDiceButton.Enabled = true;
+            }
+            else
+            {
+                useDiceButton.Enabled = false;
             }
         }
 
@@ -285,8 +376,10 @@ namespace Dice_or_Die
             else
             {
                 _data.money -= upgrade.cost;
+                moneyLabelShop.Text = "Money: " + _data.money.ToString();
+                commit_player_value(_data);
             }
-            switch (upgrade.type)
+            switch (upgrade.upgrade_type)
             {
                 case "heal":
                     if (_data.health + upgrade.value <= _data.max_health)
@@ -297,14 +390,19 @@ namespace Dice_or_Die
                     {
                         _data.health = _data.max_health;
                     }
+                    healthLabelShop.Text = "Health: " + _data.health.ToString();
                     break;
 
                 case "attack":
                     _data.outgoing_damage += upgrade.value;
+                    attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
+                    commit_player_value(_data);
                     break;
 
                 case "damagex":
-                    _data.outgoing_damage += upgrade.value;
+                    _data.outgoing_damage *= upgrade.value;
+                    attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
+                    commit_player_value(_data);
                     break;
 
                 case "block":
@@ -313,10 +411,19 @@ namespace Dice_or_Die
                 case "upgrade-roll":
 
                     break;
+
+                case "growth":
+                    _data.max_health += upgrade.value;
+                    _data.health += upgrade.value;
+                    commit_player_value(_data);
+                    break;
             }
 
             commit_player_value(_data);
+            healthLabelShop.Text = "Health: " + _data.health.ToString();
+            moneyLabelShop.Text = "Money: " + _data.money.ToString();
             return true;
+
         }
 
         private void end_shop()
@@ -326,6 +433,9 @@ namespace Dice_or_Die
             gamePanel.Visible = true;
             shopPanel.Visible = false;
             _data.roll_count = 0;
+            useDiceButton.Enabled = true;
+            payoutLabel.Visible = false;
+
 
             commit_player_value(_data);
             switch_players();
@@ -343,9 +453,15 @@ namespace Dice_or_Die
         {
             PlayerData data_ = GetPlayerData(current_player);
             data_.is_turn = false;
+            commit_player_value(data_);
             current_player = current_player == 1 ? 2 : 1;
+            int p = current_player;
             PlayerData data_2 = GetPlayerData(current_player);
             data_2.is_turn = true;
+            commit_player_value(data_2);
+
+            data_.health -= (data_2.outgoing_damage - data_.shield);
+            data_2.outgoing_damage = 0;
             commit_player_value(data_);
             commit_player_value(data_2);
 
@@ -355,6 +471,7 @@ namespace Dice_or_Die
         private void init_game()
         {
             PlayerData data_ = GetPlayerData(current_player);
+            PlayerData data_2 = GetPlayerData(current_player == 1 ? 2 : 1);
             gamePanel.Visible = true;
             shopPanel.Visible = false;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
@@ -362,10 +479,13 @@ namespace Dice_or_Die
             rolldice_button.Text = "Roll";
             moneyLabel.Text = "Money: " + data_.money.ToString();
             healthLabel.Text = "Health: " + data_.health.ToString();
+            incomingDamageLabel.Text = "Incoming Damage: " + data_2.outgoing_damage.ToString();
+            attackLabel.Text = "Attack: " + data_.outgoing_damage.ToString();
             int t = data_.player_id;
 
             clear_dice();
             init_dice(data_.dice_count);
+            fill_rollbox_bottom();
 
         }
 
@@ -418,15 +538,15 @@ namespace Dice_or_Die
             }
             if (name == "none")
             {
-                return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
+                return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", upgrade_type = "heal", value = 1 };
             }
-            return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", type = "heal", value = 1 };
+            return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", upgrade_type = "heal", value = 1 };
         }
 
         private void buyButton_Click(object sender, EventArgs e)
         {
             int selected_index = upgradesBox.SelectedIndex;
-            var selected_value = upgradesBox.SelectedItem;
+            Upgrade selected_value = (Upgrade)upgradesBox.SelectedItems[0];
 
 
             if (selected_value == null)
@@ -434,8 +554,8 @@ namespace Dice_or_Die
                 MessageBox.Show("Please select an upgrade");
                 return;
             }
-
-            if (!resolve_upgrade(fetch_upgrade(selected_value.ToString())))
+            Upgrade upgrade = selected_value;
+            if (!resolve_upgrade(selected_value))
             {
                 MessageBox.Show("Not enough money");
             }
@@ -465,6 +585,10 @@ namespace Dice_or_Die
 
         private List<string> validateroll(List<int> dicerow)
         {
+            if (dicerow.Count == 0)
+            {
+                return new List<string>();
+            }
             List<string> rolls = new List<string>();
             bool full_house = false;
             bool pair = false;
@@ -567,6 +691,55 @@ namespace Dice_or_Die
             Menu menu = new Menu();
             menu.Show();
             this.Hide();
+        }
+
+        private void useDiceButton_Click(object sender, EventArgs e)
+        {
+            Roll roll = (Roll)rollBox.SelectedItem;
+            if (roll == null)
+            {
+                MessageBox.Show("Please select a roll");
+                return;
+            }
+            PlayerData data_ = GetPlayerData(current_player);
+            data_.roll_count = 0;
+            //Roll roll = fetch_roll(selected_roll.name);
+            switch (roll.effect_type)
+            {
+                case "heal":
+                    if (data_.health + roll.value <= data_.max_health)
+                    {
+                        data_.health += roll.value;
+                    }
+                    else
+                    {
+                        data_.health = data_.max_health;
+                    }
+                    break;
+                case "damage":
+                    data_.outgoing_damage += roll.value;
+                    break;
+            }
+            data_.roll_count = data_.max_rolls;
+            amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+            rolldice_button.Text = "Shop";
+            commit_player_value(data_);
+            rollBox.Items.Clear();
+
+        }
+
+        private void switchSectionTick_CheckedChanged(object sender, EventArgs e)
+        {
+            if (switchSectionTick.Checked)
+            {
+                // Top
+                fill_rollbox_top();
+            }
+            else
+            {
+                // Bottom | Default
+                fill_rollbox_bottom();
+            }
         }
     }
 }

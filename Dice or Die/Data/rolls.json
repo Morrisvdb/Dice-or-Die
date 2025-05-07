@@ -1,0 +1,109 @@
+[
+  {
+    "_comment": "The top 6 can only be used once per game, the rest can be used multiple times",
+    "_comment2": "When they are all used, if the sum of all is over 63 the player is rewarded 100 coins"
+  },
+
+  {
+    "name": "aces",
+    "title": "Aces",
+    "description": "Any amount of ones in a roll",
+    "_comment": "All of the following are multiplied by the amount of said number in the roll",
+    "effect_type": "coins",
+    "value": 1
+  },
+  {
+    "name": "twos",
+    "title": "Twos",
+    "description": "Any amount of twos in a roll",
+    "effect_type": "coins",
+    "value": 2
+  },
+  {
+    "name": "threes",
+    "title": "Threes",
+    "description": "Any amount of threes in a roll",
+    "effect_type": "coins",
+    "value": 3
+  },
+  {
+    "name": "fours",
+    "title": "Fours",
+    "description": "Any amount of fours in a roll",
+    "effect_type": "coins",
+    "value": 4
+  },
+  {
+    "name": "fives",
+    "title": "Fives",
+    "description": "Any amount of fives in a roll",
+    "effect_type": "coins",
+    "value": 5
+  },
+  {
+    "name": "sixes",
+    "title": "Sixes",
+    "description": "Any amount of sixes in a roll",
+    "effect_type": "coins",
+    "value": 6
+  },
+  {
+    "name": "top_bonus",
+    "title": "Top Bonus",
+    "description": "If the sum of the top 6 is over 63, you get a bonus",
+    "effect_type": "coins",
+    "value": 100
+  },
+
+
+  {
+    "name": "pair",
+    "title": "Pair",
+    "description": "A pair of dice with the same number",
+    "effect_type": "heal",
+    "value": 2
+  },
+  {
+    "name": "three_of_a_kind",
+    "title": "Three of a Kind",
+    "description": "Three dice with the same number",
+    "effect_type": "damage",
+    "value": 3
+  },
+  {
+    "name": "four_of_a_kind",
+    "title": "Four of a Kind",
+    "description": "Four dice with the same number",
+    "effect_type": "damage",
+    "value": 4
+  },
+  {
+    "name": "full_house",
+    "title": "Full House",
+    "description": "A pair and three of a kind",
+    "effect_type": "heal",
+    "value": 5
+  },
+  {
+    "name": "small_straight",
+    "title": "Small Straight",
+    "description": "Four consecutive ascending numbers",
+    "effect_type": "reduce_dice",
+    "value": 1
+  },
+  {
+    "name": "large_straight",
+    "title": "Large Straight",
+    "description": "Five consecutive ascending numbers",
+    "effect_type": "add_dice",
+    "_comment": "add 1 die to the pool, if 6 dice are already equiped add 6 coins instead",
+    "value": 1
+  },
+  {
+    "name": "yathzee",
+    "title": "Yathzee",
+    "description": "Five dice with the same number",
+    "effect_type": "damage",
+    "value": 9
+  }
+]
