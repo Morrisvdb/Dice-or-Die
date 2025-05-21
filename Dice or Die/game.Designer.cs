@@ -32,6 +32,7 @@
             amountrolls_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            attackLabel = new Label();
             incomingDamageLabel = new Label();
             switchSectionTick = new CheckBox();
             payoutLabel = new Label();
@@ -42,6 +43,8 @@
             moneyLabel = new Label();
             healthLabel = new Label();
             shopPanel = new Panel();
+            upgradeRollButton = new Button();
+            rollsUpgradeBox = new ListBox();
             incomingDamageLabelShop = new Label();
             attackLabelShop = new Label();
             healthLabelShop = new Label();
@@ -50,7 +53,6 @@
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
-            attackLabel = new Label();
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
             SuspendLayout();
@@ -104,6 +106,15 @@
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 352);
             gamePanel.TabIndex = 9;
+            // 
+            // attackLabel
+            // 
+            attackLabel.AutoSize = true;
+            attackLabel.Location = new Point(348, 35);
+            attackLabel.Name = "attackLabel";
+            attackLabel.Size = new Size(58, 20);
+            attackLabel.TabIndex = 18;
+            attackLabel.Text = "Attack: ";
             // 
             // incomingDamageLabel
             // 
@@ -193,6 +204,8 @@
             // 
             // shopPanel
             // 
+            shopPanel.Controls.Add(upgradeRollButton);
+            shopPanel.Controls.Add(rollsUpgradeBox);
             shopPanel.Controls.Add(incomingDamageLabelShop);
             shopPanel.Controls.Add(attackLabelShop);
             shopPanel.Controls.Add(healthLabelShop);
@@ -203,9 +216,28 @@
             shopPanel.Controls.Add(continueFromShopButton);
             shopPanel.Location = new Point(528, 27);
             shopPanel.Name = "shopPanel";
-            shopPanel.Size = new Size(452, 281);
+            shopPanel.Size = new Size(498, 281);
             shopPanel.TabIndex = 10;
             shopPanel.Visible = false;
+            // 
+            // upgradeRollButton
+            // 
+            upgradeRollButton.Location = new Point(379, 188);
+            upgradeRollButton.Name = "upgradeRollButton";
+            upgradeRollButton.Size = new Size(94, 29);
+            upgradeRollButton.TabIndex = 19;
+            upgradeRollButton.Text = "Buy";
+            upgradeRollButton.UseVisualStyleBackColor = true;
+            upgradeRollButton.Click += upgradeRollButton_Click;
+            // 
+            // rollsUpgradeBox
+            // 
+            rollsUpgradeBox.DisplayMember = "title";
+            rollsUpgradeBox.FormattingEnabled = true;
+            rollsUpgradeBox.Location = new Point(359, 78);
+            rollsUpgradeBox.Name = "rollsUpgradeBox";
+            rollsUpgradeBox.Size = new Size(136, 104);
+            rollsUpgradeBox.TabIndex = 18;
             // 
             // incomingDamageLabelShop
             // 
@@ -269,7 +301,7 @@
             upgradesBox.FormattingEnabled = true;
             upgradesBox.Location = new Point(35, 78);
             upgradesBox.Name = "upgradesBox";
-            upgradesBox.Size = new Size(378, 104);
+            upgradesBox.Size = new Size(318, 104);
             upgradesBox.TabIndex = 1;
             upgradesBox.ValueMember = "name";
             // 
@@ -282,15 +314,6 @@
             returnToMenuButton.Text = "Menu";
             returnToMenuButton.UseVisualStyleBackColor = true;
             returnToMenuButton.Click += returnToMenuButton_Click;
-            // 
-            // attackLabel
-            // 
-            attackLabel.AutoSize = true;
-            attackLabel.Location = new Point(348, 35);
-            attackLabel.Name = "attackLabel";
-            attackLabel.Size = new Size(58, 20);
-            attackLabel.TabIndex = 18;
-            attackLabel.Text = "Attack: ";
             // 
             // Game
             // 
@@ -337,5 +360,8 @@
         private Label incomingDamageLabelShop;
         private Label incomingDamageLabel;
         private Label attackLabel;
+        private PictureBox pictureBox1;
+        private ListBox rollsUpgradeBox;
+        private Button upgradeRollButton;
     }
 }

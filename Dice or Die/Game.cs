@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dice_or_Die.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -37,6 +38,7 @@ namespace Dice_or_Die
             public int level { get; set; } = 0; // The level of the roll
             public string effect_type { get; set; } = "none"; // The type of the effect
             public int value { get; set; } = 0; // The value of the effect
+            public int schaling { get; set; } = 0; // The scaling of the effect
         }
 
         public class PlayerData
@@ -54,7 +56,8 @@ namespace Dice_or_Die
             public int max_health { get; set; } = 10; // The maximum health of the player
             public int shield { get; set; } = 0; // The amount of damage that will be blocked
             public int grace { get; set; } = 0; // How many rounds of 100% damage reduction left
-            public int damage_multiplier { get; set; } = 1; // The amount of damage that will be multiplied by the player (default 1)
+            public int dice_count_mod { get; set; } = 0; // The temportary change in dice count (-1 is one less, 1 is one more ect.)
+            public int damage_multiplier { get; set; } = 0; // The amount of damage that will be multiplied by the player (default 1)
             public int high_roll_level { get; set; } = 0; // The level of high roll
             public int pair_level { get; set; } = 0; // The level of pair
             public int three_of_a_kind_level { get; set; } = 0; // The level of three of a kind
@@ -230,43 +233,44 @@ namespace Dice_or_Die
 
         private void rolldice_button_Click(object sender, EventArgs e)
         {
-            int coins = 0;
             PlayerData data_ = GetPlayerData(current_player);
-            if (data_.roll_count >= data_.max_rolls)
-            {
-                //int coins = 0;
-                foreach (var die in dice)
-                {
-                    coins += die.Value.Key;
-                }
-                data_.money += coins;
-                commit_player_value(data_);
-                start_shop();
-                return;
-            }
             data_.roll_count++;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+
             if (data_.roll_count == data_.max_rolls)
             {
+                int coins = 0;
+                var dici = dice;
                 foreach (var die in dice)
                 {
                     coins += die.Value.Key;
                 }
+
                 payoutLabel.Visible = true;
                 payoutLabel.Text = "Payout: " + coins.ToString() + "$";
                 rolldice_button.Text = "Shop";
             }
-            roll_dice(data_.dice_count);
 
-            draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
-
-            if (!switchSectionTick.Checked)
+            if (data_.roll_count > data_.max_rolls)
             {
-                fill_rollbox_bottom();
+                start_shop();
+                return;
             }
-            else
+
+            if (data_.roll_count < data_.max_rolls)
             {
-                fill_rollbox_top();
+                roll_dice(data_.dice_count);
+
+                draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
+
+                if (!switchSectionTick.Checked)
+                {
+                    fill_rollbox_bottom();
+                }
+                else
+                {
+                    fill_rollbox_top();
+                }
             }
 
             commit_player_value(data_);
@@ -275,8 +279,23 @@ namespace Dice_or_Die
         private void start_shop()
         {
             PlayerData _data = GetPlayerData(current_player);
+
+            int coins = 0;
+            var dici = dice;
+            foreach (var die in dici)
+            {
+                if (die.Value.Key == -1)
+                {
+                    continue;
+                }
+                coins += die.Value.Key;
+            }
+            _data.money += coins;
+
+
             PlayerData _data2 = GetPlayerData(current_player == 1 ? 2 : 1);
             _data.in_shop = true;
+            _data.dice_count_mod = 0;
             commit_player_value(_data);
 
             gamePanel.Visible = false;
@@ -291,7 +310,11 @@ namespace Dice_or_Die
 
         private void populate_shop()
         {
+            PlayerData player_data = GetPlayerData(current_player);
             string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\upgrades.json";
+            string rolls_path = @"C:\Informatica\Dice or Die\Dice or Die\Data\rolls.json";
+            string rolls_json_in = File.ReadAllText(rolls_path);
+            List<Roll> _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
             string json_in = File.ReadAllText(path);
             List<Upgrade> _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in);
 
@@ -309,6 +332,14 @@ namespace Dice_or_Die
                 upgrade.description += " (" + upgrade.cost + ")";
                 upgradesBox.Items.Add(upgrade);
             }
+            rollsUpgradeBox.Items.Clear();
+            rollsUpgradeBox.Items.Add(_rolls[8]);
+            rollsUpgradeBox.Items.Add(_rolls[9]);
+            rollsUpgradeBox.Items.Add(_rolls[10]);
+            rollsUpgradeBox.Items.Add(_rolls[11]);
+            rollsUpgradeBox.Items.Add(_rolls[12]);
+            rollsUpgradeBox.Items.Add(_rolls[13]);
+            rollsUpgradeBox.Items.Add(_rolls[14]);
         }
 
         private Roll fetch_roll(string name)
@@ -460,6 +491,15 @@ namespace Dice_or_Die
             data_2.is_turn = true;
             commit_player_value(data_2);
 
+            if (data_2.outgoing_damage - data_.shield > 0)
+            {
+                // Add damage flash
+            }
+            if (data_2.outgoing_damage > 0 && data_2.outgoing_damage - data_.shield > 0)
+            {
+                // Add shield flash
+            }
+
             data_.health -= (data_2.outgoing_damage - data_.shield);
             data_2.outgoing_damage = 0;
             commit_player_value(data_);
@@ -484,7 +524,7 @@ namespace Dice_or_Die
             int t = data_.player_id;
 
             clear_dice();
-            init_dice(data_.dice_count);
+            init_dice(data_.dice_count + data_.dice_count_mod);
             fill_rollbox_bottom();
 
         }
@@ -589,6 +629,10 @@ namespace Dice_or_Die
             {
                 return new List<string>();
             }
+            while (dicerow.Count < 5)
+            {
+                dicerow.Add(0);
+            }
             List<string> rolls = new List<string>();
             bool full_house = false;
             bool pair = false;
@@ -598,17 +642,31 @@ namespace Dice_or_Die
             bool large_straight = false;
             bool yathzee = false;
 
-            if ((dicerow[0] == dicerow[1] && dicerow[2] == dicerow[4] && dicerow[0] != dicerow[4]) || ((dicerow[0] == dicerow[2] && dicerow[3] == dicerow[4] && dicerow[0] != dicerow[4])))
+            if (dicerow[0] == dicerow[1] && dicerow[0] > 0 && dicerow[1] > 0 || dicerow[1] == dicerow[2] && dicerow[1] > 0 && dicerow[2] > 0 || dicerow[2] == dicerow[3] && dicerow[2] > 0 && dicerow[3] > 0 || dicerow[3] == dicerow[4] && dicerow[3] > 0 && dicerow[4] > 0)
             {
-                rolls = add_if_not_exists(rolls, "full_house");
                 rolls = add_if_not_exists(rolls, "pair");
-                rolls = add_if_not_exists(rolls, "three_of_a_kind");
-                full_house = true;
                 pair = true;
-                three_of_a_kind = true;
             }
 
-            if (dicerow[0] == dicerow[4])
+            if (dicerow[0] == dicerow[1] && dicerow[1] == dicerow[2] && dicerow[0] > 0 && dicerow[1] > 0 && dicerow[2] > 0 || dicerow[1] == dicerow[2] && dicerow[2] == dicerow[3] && dicerow[1] > 0 && dicerow[2] > 0 && dicerow[3] > 0 || dicerow[2] == dicerow[3] && dicerow[3] == dicerow[4] && dicerow[2] > 0 && dicerow[3] > 0 && dicerow[4] > 0)
+            {
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
+                rolls = add_if_not_exists(rolls, "pair");
+                three_of_a_kind = true;
+                pair = true;
+            }
+
+            if (dicerow[0] == dicerow[3] && dicerow[0] > 0 && dicerow[3] > 0 || dicerow[1] == dicerow[4] && dicerow[1] > 0 && dicerow[4] > 0)
+            {
+                rolls = add_if_not_exists(rolls, "four_of_a_kind");
+                rolls = add_if_not_exists(rolls, "three_of_a_kind");
+                rolls = add_if_not_exists(rolls, "pair");
+                four_of_a_kind = true;
+                three_of_a_kind = true;
+                pair = true;
+            }
+
+            if (dicerow[0] == dicerow[4] && dicerow[0] > 0 && dicerow[4] > 0)
             {
                 rolls = add_if_not_exists(rolls, "yathzee");
                 rolls = add_if_not_exists(rolls, "four_of_a_kind");
@@ -620,66 +678,40 @@ namespace Dice_or_Die
                 pair = true;
             }
 
-            if ((four_of_a_kind == false) && ((dicerow[0] == dicerow[3]) || (dicerow[1] == dicerow[4])))
+            if (three_of_a_kind && dicerow[0] == dicerow[1] && dicerow[1] != dicerow[2] || three_of_a_kind && dicerow[1] == dicerow[2] && dicerow[2] != dicerow[3] || three_of_a_kind && dicerow[2] == dicerow[3] && dicerow[3] != dicerow[4])
             {
-                rolls = add_if_not_exists(rolls, "four_of_a_kind");
-                rolls = add_if_not_exists(rolls, "three_of_a_kind");
-                rolls = add_if_not_exists(rolls, "pair");
-                four_of_a_kind = true;
-                three_of_a_kind = true;
-                pair = true;
+                rolls = add_if_not_exists(rolls, "full_house");
+                full_house = true;
             }
 
-            if ((three_of_a_kind == false) && ((dicerow[0] == dicerow[2]) || (dicerow[1] == dicerow[3]) || (dicerow[2] == dicerow[4])))
+            if (dicerow[0] == dicerow[1] - 1 && dicerow[1] == dicerow[2] - 1 && dicerow[2] == dicerow[3] - 1 && dicerow[3] == dicerow[4] - 1)
             {
-                rolls = add_if_not_exists(rolls, "three_of_a_kind");
-                rolls = add_if_not_exists(rolls, "pair");
-                three_of_a_kind = true;
-                pair = true;
-            }
-
-            if ((pair == false) && ((dicerow[0] == dicerow[1]) || (dicerow[1] == dicerow[2]) || (dicerow[2] == dicerow[3]) || (dicerow[3] == dicerow[4])))
-            {
-                rolls = add_if_not_exists(rolls, "pair");
-                pair = true;
-            }
-
-            if ((dicerow[1] == dicerow[0] + 1) && (dicerow[2] == dicerow[1] + 1) && (dicerow[3] == dicerow[2] + 1) && (dicerow[4] == dicerow[3] + 1))
-            {
-                rolls = add_if_not_exists(rolls, "small_straight");
                 rolls = add_if_not_exists(rolls, "large_straight");
-                small_straight = true;
                 large_straight = true;
             }
-
-            if (small_straight == false)
+            if (pair)
             {
-                if (((dicerow[0] == dicerow[1] - 1) && (dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1)) || ((dicerow[1] == dicerow[2] - 1) && (dicerow[2] == dicerow[3] - 1) && (dicerow[3] == dicerow[4] - 1)))
+                List<int> pair_list = new List<int>();
+                foreach (int i in dicerow) { pair_list.Add(i); }
+                if (pair_list[3] == pair_list[4]) { pair_list.RemoveAt(3); }
+                if (pair_list[2] == pair_list[3]) { pair_list.RemoveAt(2); }
+                if (pair_list[1] == pair_list[2]) { pair_list.RemoveAt(1); }
+                if (pair_list[0] == pair_list[1]) { pair_list.RemoveAt(0); }
+                if (pair_list.Count == 4)
                 {
-                    rolls = add_if_not_exists(rolls, "small_straight");
-                    small_straight = true;
-                }
-
-                List<int> small_straight_list = [];
-
-                foreach (int i in dicerow) { small_straight_list.Add(i); }
-
-                if (pair == true)
-                {
-                    if (dicerow[3] == dicerow[4]) { small_straight_list.RemoveAt(3); }
-                    if (dicerow[2] == dicerow[3]) { small_straight_list.RemoveAt(2); }
-                    if (dicerow[1] == dicerow[2]) { small_straight_list.RemoveAt(1); }
-                    if (dicerow[0] == dicerow[1]) { small_straight_list.RemoveAt(0); }
-
-                    if (small_straight_list.Count == 4)
+                    if ((pair_list[0] == pair_list[1] - 1) && (pair_list[1] == pair_list[2] - 1) && (pair_list[2] == pair_list[3] - 1))
                     {
-                        if ((small_straight_list[0] == small_straight_list[1] - 1) && (small_straight_list[1] == small_straight_list[2] - 1) && (small_straight_list[2] == small_straight_list[3] - 1))
-                        {
-                            rolls = add_if_not_exists(rolls, "small_straight");
-                            small_straight = true;
-                        }
+                        rolls = add_if_not_exists(rolls, "small_straight");
+                        small_straight = true;
                     }
                 }
+
+            }
+
+            if (dicerow[0] == dicerow[1] - 1 && dicerow[1] == dicerow[2] - 1 && dicerow[2] == dicerow[3] - 1 || dicerow[1] == dicerow[2] - 1 && dicerow[2] == dicerow[3] - 1 && dicerow[3] == dicerow[4] - 1)
+            {
+                rolls = add_if_not_exists(rolls, "small_straight");
+                small_straight = true;
             }
 
             return rolls;
@@ -701,15 +733,25 @@ namespace Dice_or_Die
                 MessageBox.Show("Please select a roll");
                 return;
             }
+
+
+            object rolls = Resources.ResourceManager.GetObject("rolls");
+            List<Roll> rolldata = JsonSerializer.Deserialize<List<Roll>>(rolls.ToString());
+
+
+
+
             PlayerData data_ = GetPlayerData(current_player);
+            PlayerData data_2 = GetPlayerData(current_player == 1 ? 2 : 1);
             data_.roll_count = 0;
             //Roll roll = fetch_roll(selected_roll.name);
+            int value = roll.value + roll.level * roll.schaling;
             switch (roll.effect_type)
             {
                 case "heal":
-                    if (data_.health + roll.value <= data_.max_health)
+                    if (data_.health + value <= data_.max_health)
                     {
-                        data_.health += roll.value;
+                        data_.health += value;
                     }
                     else
                     {
@@ -717,15 +759,23 @@ namespace Dice_or_Die
                     }
                     break;
                 case "damage":
-                    data_.outgoing_damage += roll.value;
+                    data_.outgoing_damage += value;
+                    attackLabel.Text = "Attack: " + data_.outgoing_damage.ToString();
                     break;
+                case "coins":
+                    data_.money += value;
+                    break;
+                case "reduce_dice":
+                    data_2.dice_count_mod -= value;
+                    break;
+
             }
             data_.roll_count = data_.max_rolls;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
             rolldice_button.Text = "Shop";
             commit_player_value(data_);
+            commit_player_value(data_2);
             rollBox.Items.Clear();
-
         }
 
         private void switchSectionTick_CheckedChanged(object sender, EventArgs e)
@@ -739,6 +789,55 @@ namespace Dice_or_Die
             {
                 // Bottom | Default
                 fill_rollbox_bottom();
+            }
+        }
+
+        private void upgradeRollButton_Click(object sender, EventArgs e)
+        {
+            if (rollsUpgradeBox.SelectedItem == null)
+            {
+                return;
+            }
+            PlayerData playerData = GetPlayerData(current_player);
+            Roll selected_roll = (Roll)rollsUpgradeBox.SelectedItem;
+
+            if (playerData.money < 50)
+            {
+                MessageBox.Show("Not enough money");
+                return;
+            }
+            else
+            {
+                switch (selected_roll.name)
+                {
+                    case "high_roll":
+                        playerData.high_roll_level++;
+                        break;
+                    case "pair":
+                        playerData.pair_level++;
+                        break;
+                    case "three_of_a_kind":
+                        playerData.three_of_a_kind_level++;
+                        break;
+                    case "four_of_a_kind":
+                        playerData.four_of_a_kind_level++;
+                        break;
+                    case "full_house":
+                        playerData.full_house_level++;
+                        break;
+                    case "small_straight":
+                        playerData.small_straight_level++;
+                        break;
+                    case "large_straight":
+                        playerData.large_straight_level++;
+                        break;
+                    case "yathzee":
+                        playerData.yathzee_level++;
+                        break;
+                }
+                playerData.money -= 50;
+                moneyLabelShop.Text = "Money: " + playerData.money.ToString();
+                commit_player_value(playerData);
             }
         }
     }
