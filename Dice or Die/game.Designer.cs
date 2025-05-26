@@ -32,6 +32,7 @@
             amountrolls_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            healthBar = new ProgressBar();
             attackLabel = new Label();
             incomingDamageLabel = new Label();
             switchSectionTick = new CheckBox();
@@ -53,6 +54,7 @@
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
+            healthBarShop = new ProgressBar();
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
             SuspendLayout();
@@ -90,6 +92,7 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(healthBar);
             gamePanel.Controls.Add(attackLabel);
             gamePanel.Controls.Add(incomingDamageLabel);
             gamePanel.Controls.Add(switchSectionTick);
@@ -106,6 +109,13 @@
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 352);
             gamePanel.TabIndex = 9;
+            // 
+            // healthBar
+            // 
+            healthBar.Location = new Point(139, 41);
+            healthBar.Name = "healthBar";
+            healthBar.Size = new Size(125, 20);
+            healthBar.TabIndex = 19;
             // 
             // attackLabel
             // 
@@ -204,6 +214,7 @@
             // 
             // shopPanel
             // 
+            shopPanel.Controls.Add(healthBarShop);
             shopPanel.Controls.Add(upgradeRollButton);
             shopPanel.Controls.Add(rollsUpgradeBox);
             shopPanel.Controls.Add(incomingDamageLabelShop);
@@ -315,6 +326,13 @@
             returnToMenuButton.UseVisualStyleBackColor = true;
             returnToMenuButton.Click += returnToMenuButton_Click;
             // 
+            // healthBarShop
+            // 
+            healthBarShop.Location = new Point(81, 35);
+            healthBarShop.Name = "healthBarShop";
+            healthBarShop.Size = new Size(125, 20);
+            healthBarShop.TabIndex = 20;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -363,5 +381,7 @@
         private PictureBox pictureBox1;
         private ListBox rollsUpgradeBox;
         private Button upgradeRollButton;
+        private ProgressBar healthBar;
+        private ProgressBar healthBarShop;
     }
 }

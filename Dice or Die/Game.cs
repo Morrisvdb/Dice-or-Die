@@ -1,5 +1,4 @@
-﻿using Dice_or_Die.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,7 +16,16 @@ using System.Xml.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dice_or_Die
-{
+{    public static class ModifyProgressBarColor
+    {
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr w, IntPtr l);
+        public static void SetState(this ProgressBar pBar, int state)
+        {
+            SendMessage(pBar.Handle, 1040, (IntPtr)state, IntPtr.Zero);
+        }
+    }
+
     public partial class Game : Form
     {
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
@@ -301,7 +310,8 @@ namespace Dice_or_Die
             gamePanel.Visible = false;
             shopPanel.Visible = true;
             moneyLabelShop.Text = "Money: " + _data.money.ToString();
-            healthLabelShop.Text = "Health: " + _data.health.ToString();
+            //healthLabelShop.Text = "Health: " + _data.health.ToString();
+            setHealthBar(_data);
             attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
             incomingDamageLabelShop.Text = "Incoming Damage: " + _data2.outgoing_damage.ToString();
             currentPlayerLabelShop.Text = "Current Player: " + _data.player_id.ToString();
@@ -421,7 +431,8 @@ namespace Dice_or_Die
                     {
                         _data.health = _data.max_health;
                     }
-                    healthLabelShop.Text = "Health: " + _data.health.ToString();
+                    //healthLabelShop.Text = "Health: " + _data.health.ToString();
+                    setHealthBar(_data);
                     break;
 
                 case "attack":
@@ -451,7 +462,8 @@ namespace Dice_or_Die
             }
 
             commit_player_value(_data);
-            healthLabelShop.Text = "Health: " + _data.health.ToString();
+            //healthLabelShop.Text = "Health: " + _data.health.ToString();
+            setHealthBar(_data);
             moneyLabelShop.Text = "Money: " + _data.money.ToString();
             return true;
 
@@ -518,7 +530,8 @@ namespace Dice_or_Die
             currentPlayerLabel.Text = "Current Player: " + data_.player_id.ToString();
             rolldice_button.Text = "Roll";
             moneyLabel.Text = "Money: " + data_.money.ToString();
-            healthLabel.Text = "Health: " + data_.health.ToString();
+            //healthLabel.Text = "Health: " + data_.health.ToString();
+            setHealthBar(data_);
             incomingDamageLabel.Text = "Incoming Damage: " + data_2.outgoing_damage.ToString();
             attackLabel.Text = "Attack: " + data_.outgoing_damage.ToString();
             int t = data_.player_id;
@@ -735,8 +748,8 @@ namespace Dice_or_Die
             }
 
 
-            object rolls = Resources.ResourceManager.GetObject("rolls");
-            List<Roll> rolldata = JsonSerializer.Deserialize<List<Roll>>(rolls.ToString());
+            //object rolls = Resources.ResourceManager.GetObject("rolls");
+            //List<Roll> rolldata = JsonSerializer.Deserialize<List<Roll>>(rolls.ToString());
 
 
 
@@ -839,6 +852,37 @@ namespace Dice_or_Die
                 moneyLabelShop.Text = "Money: " + playerData.money.ToString();
                 commit_player_value(playerData);
             }
+        }
+
+        private void setHealthBar(PlayerData playerData)
+        {
+            ProgressBar bar;
+            if (playerData.in_shop)
+            {
+                bar = healthBarShop;
+            } else
+            {
+                bar = healthBar;
+            }
+
+            bar.Maximum = playerData.max_health;
+            bar.Value = playerData.health;
+
+            float h_frac = (float)playerData.health / (float)playerData.max_health;
+            if (h_frac <= 0.25)
+            {
+                bar.SetState(2); // Error state
+            }
+            else if (h_frac <= 0.5)
+            {
+                bar.SetState(1); // Warning state
+            }
+            else
+            {
+                bar.SetState(0); // Normal state
+            }
+
+            bar.Refresh();
         }
     }
 }
