@@ -16,16 +16,7 @@ using System.Xml.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dice_or_Die
-{    public static class ModifyProgressBarColor
-    {
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr w, IntPtr l);
-        public static void SetState(this ProgressBar pBar, int state)
-        {
-            SendMessage(pBar.Handle, 1040, (IntPtr)state, IntPtr.Zero);
-        }
-    }
-
+{    
     public partial class Game : Form
     {
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
@@ -883,6 +874,16 @@ namespace Dice_or_Die
             }
 
             bar.Refresh();
+        }
+    }
+
+    public static class ModifyProgressBarColor
+    {
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr w, IntPtr l);
+        public static void SetState(this ProgressBar pBar, int state)
+        {
+            SendMessage(pBar.Handle, 1040, (IntPtr)state, IntPtr.Zero);
         }
     }
 }
