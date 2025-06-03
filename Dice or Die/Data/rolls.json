@@ -9,42 +9,42 @@
     "title": "Aces",
     "description": "Any amount of ones in a roll",
     "_comment": "All of the following are multiplied by the amount of said number in the roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 1
   },
   {
     "name": "twos",
     "title": "Twos",
     "description": "Any amount of twos in a roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 2
   },
   {
     "name": "threes",
     "title": "Threes",
     "description": "Any amount of threes in a roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 3
   },
   {
     "name": "fours",
     "title": "Fours",
     "description": "Any amount of fours in a roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 4
   },
   {
     "name": "fives",
     "title": "Fives",
     "description": "Any amount of fives in a roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 5
   },
   {
     "name": "sixes",
     "title": "Sixes",
     "description": "Any amount of sixes in a roll",
-    "effect_type": "coins",
+    "effect_type": "coins-top",
     "value": 6
   },
   {

@@ -5,23 +5,27 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dice_or_Die
-{    
+{
     public partial class Game : Form
     {
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
         public int current_player = 1;
+        private int tick_count = 0;
+        private int current_rolling = 0;
 
         private const int dice_x = 100;
         private const int dice_y = 100;
@@ -74,52 +78,63 @@ namespace Dice_or_Die
             public int used_small_straights { get; set; } = 0; // The number of small straights used
             public int used_large_straights { get; set; } = 0; // The number of large straights used
             public int used_yathzees { get; set; } = 0; // The number of yathzees used
-            public int aces_value { get; set; } = 0; // The value of the aces   
-            public int twos_value { get; set; } = 0; // The value of the twos
-            public int threes_value { get; set; } = 0; // The value of the threes
-            public int fours_value { get; set; } = 0; // The value of the fours
-            public int fives_value { get; set; } = 0; // The value of the fives
-            public int sixes_value { get; set; } = 0; // The value of the sixes
+            public int aces_used{ get; set; } = 0; // The value of the aces   
+            public int twos_used { get; set; } = 0; // The value of the twos
+            public int threes_used { get; set; } = 0; // The value of the threes
+            public int fours_used { get; set; } = 0; // The value of the fours
+            public int fives_used { get; set; } = 0; // The value of the fives
+            public int sixes_used { get; set; } = 0; // The value of the sixes
 
         }
 
         public PlayerData GetPlayerData(int player_number)
         {
-            string path = @"C:\Informatica\Dice or Die\player_" + player_number + "_data.json";
-            if (!File.Exists(path))
-            {
-                PlayerData _data = new PlayerData { player_id = player_number };
-                string json_out = JsonSerializer.Serialize(_data);
-                File.Create(path).Close();
-                File.WriteAllText(path, json_out);
-                return new PlayerData();
-            }
-            else
+            string path = Environment.SpecialFolder.CommonDocuments + @"\Dice or Die\player_" + player_number + "_data.json";
+
+            if (File.Exists(path))
             {
                 string json_ = File.ReadAllText(path);
                 PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
-
+                if (_data == null)
+                {
+                    _data = new PlayerData { player_id = player_number };
+                    string json_out = JsonSerializer.Serialize(_data);
+                    File.WriteAllText(path, json_out);
+                }
+                return _data;
+            }
+            else
+            {
+                PlayerData _data = new PlayerData { player_id = player_number };
+                string json_out = JsonSerializer.Serialize(_data);
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                File.WriteAllText(path, json_out);
                 return _data;
             }
         }
 
         public void commit_player_value(PlayerData data)
         {
-            string json_ = File.ReadAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json");
+            string path = Environment.SpecialFolder.CommonDocuments + @"\Dice or Die\player_" + data.player_id + "_data.json";
+
+            string json_ = File.ReadAllText(path);
             PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
             _data = data;
             string json_out = JsonSerializer.Serialize(_data);
-            File.WriteAllText(@"C:\Informatica\Dice or Die\player_" + data.player_id + "_data.json", json_out);
+            File.WriteAllText(path, json_out);
         }
 
         public void reset_save()
         {
             for (int i = 1; i < 3; i++)
             {
-                string path = @"C:\Informatica\Dice or Die\player_" + i + "_data.json";
+                string path = Environment.SpecialFolder.CommonDocuments + @"\Dice or Die\player_" + i + "_data.json";
                 if (File.Exists(path))
                 {
                     File.Delete(path);
+                } else
+                {
+                    return;
                 }
                 PlayerData _data = new PlayerData { player_id = i };
                 string json_out = JsonSerializer.Serialize(_data);
@@ -141,7 +156,7 @@ namespace Dice_or_Die
         {
             dice.Clear();
             for (int i = 0; i < count; i++)
-            {
+            {   
                 dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(-1, false));
             }
         }
@@ -160,36 +175,99 @@ namespace Dice_or_Die
             }
         }
 
-        private void draw_dice(int x, int y, int size = 50, int count = 5)
+        private void draw_dice(int x, int y, int size = 50, int count = 5, bool noroll = false)
         {
             // x (int) -> X coordinate of button set
             // y (int) -> Y coordinate of button set
             // rolls (List<int>) -> List of random numbers to display on dice
             // size (int) -> Size of each button
             // count (int) -> Number of buttons to draw
+
+            if (!noroll)
+            {
+                animate_dice();
+            }
+
             clear_dice();
             foreach (var die in dice)
             {
                 Button b = new Button();
                 b.Name = die.Key;
-                b.Text = die.Value.Key.ToString();
+                //b.Text = die.Value.Key.ToString();
                 b.Size = new Size(size, size);
                 b.Location = new Point(x, y);
                 b.Click += dice_OnClick;
                 if (die.Value.Value)
                 {
                     b.BackColor = Color.Yellow;
+                    b.Text = die.Value.Key.ToString();
                 }
                 else
                 {
                     b.BackColor = Color.LightGreen;
+                    if (noroll)
+                    {
+                        b.Text = die.Value.Key.ToString();
+                    } else
+                    {
+                        b.Text = "Rolling...";
+                    }
                 }
                 current_buttons.Add(b);
                 gamePanel.Controls.Add(b);
                 x += size + 10;
             }
+        }
 
+        private void animate_dice(int interval = 25, int loopCount = 25)
+        {
+            rollTimer.Interval = 25;
+            rollTimer.Enabled = true;
+        }
 
+        private void rollTimer_Tick(object sender, EventArgs e)
+        {
+            int roll_count = 10;
+            tick_count++;
+            if (tick_count >= roll_count)
+            {
+                //rollTimer.Enabled = false;
+                current_rolling++;
+                tick_count = 0;
+            }
+            if (current_rolling >= dice.Count)
+            {
+                current_rolling = 0;
+                rollTimer.Enabled = false;
+                if (!switchSectionTick.Checked)
+                {
+                    fill_rollbox_bottom();
+                }
+                else
+                {
+                    fill_rollbox_top();
+                }
+                return;
+            }
+
+            if (dice[current_buttons[current_rolling].Name].Value)
+            {
+                // If the die is locked, do not change the value
+                return;
+            }
+
+            if (tick_count == roll_count - 1)
+            {
+                Button b = current_buttons[current_rolling];
+                b.Text = dice[b.Name].Key.ToString();
+            }
+            else
+            {
+                Button b = current_buttons[current_rolling];
+                Random random = new Random();
+                int value = random.Next(1, 7);
+                b.Text = value.ToString();
+            }
         }
 
         public List<int> to_dicerow()
@@ -226,7 +304,7 @@ namespace Dice_or_Die
                 //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
                 int x = diceLabel.Location.X;
                 int y = diceLabel.Location.Y;
-                draw_dice(x: x, y: y, count: data_.dice_count);
+                draw_dice(x: x, y: y, count: data_.dice_count, noroll: true);
 
             }
         }
@@ -234,13 +312,10 @@ namespace Dice_or_Die
         private void rolldice_button_Click(object sender, EventArgs e)
         {
             PlayerData data_ = GetPlayerData(current_player);
-            data_.roll_count++;
-            amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
 
             if (data_.roll_count == data_.max_rolls)
             {
                 int coins = 0;
-                var dici = dice;
                 foreach (var die in dice)
                 {
                     coins += die.Value.Key;
@@ -263,15 +338,18 @@ namespace Dice_or_Die
 
                 draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
 
-                if (!switchSectionTick.Checked)
-                {
-                    fill_rollbox_bottom();
-                }
-                else
-                {
-                    fill_rollbox_top();
-                }
+                //if (!switchSectionTick.Checked)
+                //{
+                //    fill_rollbox_bottom();
+                //}
+                //else
+                //{
+                //    fill_rollbox_top();
+                //}
             }
+
+            data_.roll_count++;
+            amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
 
             commit_player_value(data_);
         }
@@ -312,12 +390,11 @@ namespace Dice_or_Die
         private void populate_shop()
         {
             PlayerData player_data = GetPlayerData(current_player);
-            string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\upgrades.json";
-            string rolls_path = @"C:\Informatica\Dice or Die\Dice or Die\Data\rolls.json";
-            string rolls_json_in = File.ReadAllText(rolls_path);
+            string rolls_json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
             List<Roll> _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
-            string json_in = File.ReadAllText(path);
-            List<Upgrade> _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in);
+            string json_in_ = System.Text.Encoding.Default.GetString(Resource1.upgrades);
+            json_in_ = json_in_.Trim('\uFEFF');
+            List<Upgrade> _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in_);
 
             Random rand = new Random();
             List<Upgrade> selected_upgrades = new List<Upgrade>();
@@ -345,8 +422,7 @@ namespace Dice_or_Die
 
         private Roll fetch_roll(string name)
         {
-            string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\rolls.json";
-            string json_in = File.ReadAllText(path);
+            string json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
             List<Roll> _data = JsonSerializer.Deserialize<List<Roll>>(json_in);
             foreach (var roll in _data)
             {
@@ -387,6 +463,50 @@ namespace Dice_or_Die
         private void fill_rollbox_top()
         {
             rollBox.Items.Clear();
+            List<int> dicerow = to_dicerow();
+            List<int> rolls = Countnumbers(dicerow);
+            
+            if (rolls[0] > 0 )
+            {
+                Roll roll_obj = fetch_roll("aces");
+                roll_obj.title += " (" + rolls[0].ToString() + ")";
+                roll_obj.value = rolls[0];
+                rollBox.Items.Add(roll_obj);
+            }
+
+            if (rolls[1] > 0)
+            {
+                Roll roll_obj = fetch_roll("twos");
+                roll_obj.title += " (" + rolls[1].ToString() + ")";
+                rollBox.Items.Add(roll_obj);
+            }
+            if (rolls[2] > 0)
+            {
+                Roll roll_obj = fetch_roll("threes");
+                roll_obj.title += " (" + rolls[2].ToString() + ")";
+                rollBox.Items.Add(roll_obj);
+            }
+
+            if (rolls[3] > 0)
+            {
+                Roll roll_obj = fetch_roll("fours");
+                roll_obj.title += " (" + rolls[3].ToString() + ")";
+                rollBox.Items.Add(roll_obj);
+            }
+
+            if (rolls[4] > 0)
+            {
+                Roll roll_obj = fetch_roll("fives");
+                roll_obj.title += " (" + rolls[4].ToString() + ")";
+                rollBox.Items.Add(roll_obj);
+            }
+
+            if (rolls[5] > 0)
+            {
+                Roll roll_obj = fetch_roll("sixes");
+                roll_obj.title += " (" + rolls[5].ToString() + ")";
+                rollBox.Items.Add(roll_obj);
+            }
 
             if (rollBox.Items.Count > 0)
             {
@@ -396,6 +516,7 @@ namespace Dice_or_Die
             {
                 useDiceButton.Enabled = false;
             }
+
         }
 
         private bool resolve_upgrade(Upgrade upgrade)
@@ -568,25 +689,6 @@ namespace Dice_or_Die
             end_shop();
         }
 
-        private Upgrade fetch_upgrade(string name)
-        {
-            string path = @"C:\Informatica\Dice or Die\Dice or Die\Data\upgrades.json";
-            string json_in = File.ReadAllText(path);
-            List<Upgrade> _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in);
-            foreach (var upgrade in _data)
-            {
-                if (upgrade.name == name)
-                {
-                    return upgrade;
-                }
-            }
-            if (name == "none")
-            {
-                return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", upgrade_type = "heal", value = 1 };
-            }
-            return new Upgrade { name = "Help", cost = 20, description = "Help, something went terribly wrong", upgrade_type = "heal", value = 1 };
-        }
-
         private void buyButton_Click(object sender, EventArgs e)
         {
             int selected_index = upgradesBox.SelectedIndex;
@@ -626,6 +728,60 @@ namespace Dice_or_Die
 
             return list;
         }
+
+        private List<int> Countnumbers(List<int> dicerow)
+        {
+            int amount_ones = 0;
+            int amount_twos = 0;
+            int amount_threes = 0;
+            int amount_fours = 0;
+            int amount_fives = 0;
+            int amount_sixes = 0;
+
+            foreach (int j in dicerow)
+            {
+                switch (j)
+                {
+                    case 1:
+                        amount_ones++;
+                        break;
+
+                    case 2:
+                        amount_twos++;
+                        break;
+
+                    case 3:
+                        amount_threes++;
+                        break;
+
+                    case 4:
+                        amount_fours++;
+                        break;
+
+                    case 5:
+                        amount_fives++;
+                        break;
+
+                    case 6:
+                        amount_sixes++;
+                        break;
+
+                    default:
+                        MessageBox.Show("Unexpected value");
+                        break;
+                }
+            }
+            List<int> allnumber_count = new List<int>();
+            allnumber_count.Add(amount_ones);
+            allnumber_count.Add(amount_twos);
+            allnumber_count.Add(amount_threes);
+            allnumber_count.Add(amount_fours);
+            allnumber_count.Add(amount_fives);
+            allnumber_count.Add(amount_sixes);
+            return allnumber_count;
+
+        }
+
 
         private List<string> validateroll(List<int> dicerow)
         {
@@ -738,13 +894,6 @@ namespace Dice_or_Die
                 return;
             }
 
-
-            //object rolls = Resources.ResourceManager.GetObject("rolls");
-            //List<Roll> rolldata = JsonSerializer.Deserialize<List<Roll>>(rolls.ToString());
-
-
-
-
             PlayerData data_ = GetPlayerData(current_player);
             PlayerData data_2 = GetPlayerData(current_player == 1 ? 2 : 1);
             data_.roll_count = 0;
@@ -771,6 +920,71 @@ namespace Dice_or_Die
                     break;
                 case "reduce_dice":
                     data_2.dice_count_mod -= value;
+                    break;
+                case "coins-top":
+                    switch (roll.name)
+                    {
+                        case "aces":
+                            if (data_.aces_used > 0)
+                            {
+                                return;
+                            }
+                            data_.aces_used += value;
+                            data_.money += value * 2;
+                            break;
+                        case "twos":
+                            if (data_.twos_used > 0)
+                            {
+                                return;
+                            }
+                            data_.twos_used += value;
+                            data_.money += value * 2;
+                            break;
+                        case "threes":
+                            if (data_.threes_used > 0)
+                            {
+                                return;
+                            }
+                            data_.threes_used += value;
+                            data_.money += value * 2;
+                            break;
+                        case "fours":
+                            if (data_.fours_used > 0)
+                            {
+                                return;
+                            }
+                            data_.fours_used += value;
+                            data_.money += value * 2;
+                            break;
+                        case "fives":
+                            if (data_.fives_used > 0)
+                            {
+                                return;
+                            }
+                            data_.fives_used += value;
+                            data_.money += value * 2;
+                            break;
+                        case "sixes":
+                            if (data_.sixes_used > 0)
+                            {
+                                return;
+                            }
+                            data_.sixes_used += value;
+                            data_.money += value * 2;
+                            break;
+
+                    }
+
+                    if (data_.aces_used > 0 && data_.twos_used > 0 && data_.threes_used > 0 && data_.fours_used > 0 && data_.fives_used > 0 && data_.sixes_used > 0)
+                    {
+                        int upper_total = data_.aces_used + data_.twos_used + data_.threes_used + data_.fours_used + data_.fives_used + data_.sixes_used;
+                        if (upper_total >= 63)
+                        {
+                            // Reward the upper bonus
+                            data_.money += 250;
+                        }
+                    }
+
                     break;
 
             }
@@ -851,7 +1065,8 @@ namespace Dice_or_Die
             if (playerData.in_shop)
             {
                 bar = healthBarShop;
-            } else
+            }
+            else
             {
                 bar = healthBar;
             }
