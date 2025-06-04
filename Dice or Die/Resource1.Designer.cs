@@ -63,6 +63,25 @@ namespace Dice_or_Die {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] battle_music {
+            get {
+                object obj = ResourceManager.GetObject("battle_music", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream menu_music {
+            get {
+                return ResourceManager.GetStream("menu_music", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] rolls {
             get {
                 object obj = ResourceManager.GetObject("rolls", resourceCulture);

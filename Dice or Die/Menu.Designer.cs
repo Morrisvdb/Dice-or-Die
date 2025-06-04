@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menu));
             playButton = new Button();
             helpButton = new Button();
             quitButton = new Button();
             settingsButton = new Button();
             resetGameButton = new Button();
+            axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayer1).BeginInit();
             SuspendLayout();
             // 
             // playButton
@@ -85,11 +88,22 @@
             resetGameButton.UseVisualStyleBackColor = true;
             resetGameButton.Click += resetGameButton_Click;
             // 
+            // axWindowsMediaPlayer1
+            // 
+            axWindowsMediaPlayer1.Enabled = true;
+            axWindowsMediaPlayer1.Location = new Point(63, 397);
+            axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            axWindowsMediaPlayer1.OcxState = (AxHost.State)resources.GetObject("axWindowsMediaPlayer1.OcxState");
+            axWindowsMediaPlayer1.Size = new Size(75, 23);
+            axWindowsMediaPlayer1.TabIndex = 5;
+            axWindowsMediaPlayer1.Visible = false;
+            // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(axWindowsMediaPlayer1);
             Controls.Add(resetGameButton);
             Controls.Add(settingsButton);
             Controls.Add(quitButton);
@@ -97,6 +111,8 @@
             Controls.Add(playButton);
             Name = "Menu";
             Text = "Menu";
+            Load += Menu_Load;
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayer1).EndInit();
             ResumeLayout(false);
         }
 
@@ -107,5 +123,6 @@
         private Button quitButton;
         private Button settingsButton;
         private Button resetGameButton;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
     }
 }

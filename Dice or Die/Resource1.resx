@@ -118,10 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="battle_music" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\0604131013.mp3;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_music" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\0604125021.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="rolls" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Data\rolls.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <comment>The file that stores the details and effects of all rolls</comment>
   </data>
   <data name="upgrades" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Data\upgrades.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <comment>The file that stores all the upgrades and their effects</comment>
   </data>
 </root>
