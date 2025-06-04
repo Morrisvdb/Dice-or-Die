@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             continueFromShopButton = new Button();
             amountrolls_label = new Label();
             rolldice_button = new Button();
@@ -44,6 +45,7 @@
             moneyLabel = new Label();
             healthLabel = new Label();
             shopPanel = new Panel();
+            healthBarShop = new ProgressBar();
             upgradeRollButton = new Button();
             rollsUpgradeBox = new ListBox();
             incomingDamageLabelShop = new Label();
@@ -54,7 +56,7 @@
             moneyLabelShop = new Label();
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
-            healthBarShop = new ProgressBar();
+            rollTimer = new System.Windows.Forms.Timer(components);
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
             SuspendLayout();
@@ -112,7 +114,7 @@
             // 
             // healthBar
             // 
-            healthBar.Location = new Point(139, 41);
+            healthBar.Location = new Point(142, 35);
             healthBar.Name = "healthBar";
             healthBar.Size = new Size(125, 20);
             healthBar.TabIndex = 19;
@@ -231,6 +233,13 @@
             shopPanel.TabIndex = 10;
             shopPanel.Visible = false;
             // 
+            // healthBarShop
+            // 
+            healthBarShop.Location = new Point(81, 35);
+            healthBarShop.Name = "healthBarShop";
+            healthBarShop.Size = new Size(125, 20);
+            healthBarShop.TabIndex = 20;
+            // 
             // upgradeRollButton
             // 
             upgradeRollButton.Location = new Point(379, 188);
@@ -326,12 +335,10 @@
             returnToMenuButton.UseVisualStyleBackColor = true;
             returnToMenuButton.Click += returnToMenuButton_Click;
             // 
-            // healthBarShop
+            // rollTimer
             // 
-            healthBarShop.Location = new Point(81, 35);
-            healthBarShop.Name = "healthBarShop";
-            healthBarShop.Size = new Size(125, 20);
-            healthBarShop.TabIndex = 20;
+            rollTimer.Interval = 20;
+            rollTimer.Tick += rollTimer_Tick;
             // 
             // Game
             // 
@@ -383,5 +390,6 @@
         private Button upgradeRollButton;
         private ProgressBar healthBar;
         private ProgressBar healthBarShop;
+        private System.Windows.Forms.Timer rollTimer;
     }
 }
