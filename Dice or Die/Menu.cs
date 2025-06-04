@@ -1,3 +1,4 @@
+using AxWMPLib;
 using Microsoft.VisualBasic.Devices;
 
 namespace Dice_or_Die
@@ -6,6 +7,7 @@ namespace Dice_or_Die
     {
         public int sound_volume = 50; // Default volume level - Can be changed in setting, will revert after game restart
         public int music_volume = 50; // Default music volume level - Can be changed in setting, will revert after game restart
+        
         public Menu()
         {
             InitializeComponent();
@@ -16,8 +18,8 @@ namespace Dice_or_Die
             Game game = new Game();
             game.Show();
             this.Hide();
-            FadeOutMusic(1000);
-            PlayTrackWithFadeIn(new MemoryStream(Resource1.battle_music), 1000, music_volume); // Play the battle music with fade-in effect
+            FadeOutMusic(100, axWindowsMediaPlayer1);
+            PlayTrackWithFadeIn(new MemoryStream(Resource1.battle_music), axWindowsMediaPlayer1, 100, music_volume); // Play the battle music with fade-in effect
         }
 
         private void settingsButton_Click(object sender, EventArgs e)
@@ -43,10 +45,10 @@ namespace Dice_or_Die
 
         private void Menu_Load(object sender, EventArgs e)
         {
-            PlayStreamWithWMP(Resource1.menu_music);
+            PlayStreamWithWMP(Resource1.menu_music, axWindowsMediaPlayer1);
         } 
 
-        public void PlayStreamWithWMP(Stream audioStream)
+        public void PlayStreamWithWMP(Stream audioStream, AxWindowsMediaPlayer player)
         {
             string tempFile = Path.GetTempFileName() + ".wav";
             using (var fileStream = File.Create(tempFile))
@@ -55,26 +57,26 @@ namespace Dice_or_Die
                 audioStream.CopyTo(fileStream);
             }
 
-            axWindowsMediaPlayer1.URL = tempFile;
-            axWindowsMediaPlayer1.Ctlcontrols.play();
+            player.URL = tempFile;
+            player.Ctlcontrols.play();
         }
 
-        public void FadeOutMusic(int fadeDuration) // Duration in ms
+        public void FadeOutMusic(int fadeDuration, AxWindowsMediaPlayer player) // Duration in ms
         {
-            if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+            if (player.playState == WMPLib.WMPPlayState.wmppsPlaying)
             {
-                for (int i = axWindowsMediaPlayer1.settings.volume; i >= 0; i -= 10)
+                for (int i = player.settings.volume; i >= 0; i -= 10)
                 {
-                    axWindowsMediaPlayer1.settings.volume = i;
+                    player.settings.volume = i;
                     System.Threading.Thread.Sleep(fadeDuration / 10);
                 }
-                axWindowsMediaPlayer1.Ctlcontrols.stop();
+                player.Ctlcontrols.stop();
             }
         }
 
-        public void PlayTrackWithFadeIn(Stream audioStream, int fadeDuration = 1000, int volume = 50) // Duration in ms
+        public void PlayTrackWithFadeIn(Stream audioStream, AxWindowsMediaPlayer player, int fadeDuration = 1000, int volume = 50) // Duration in ms
         {
-            PlayStreamWithWMP(audioStream);
+            PlayStreamWithWMP(audioStream, player);
             for (int i = 0; i <= volume; i += 10)
             {
                 axWindowsMediaPlayer1.settings.volume = i;

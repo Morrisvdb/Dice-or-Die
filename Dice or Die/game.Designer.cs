@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Game));
             continueFromShopButton = new Button();
             amountrolls_label = new Label();
             rolldice_button = new Button();
@@ -57,8 +58,10 @@
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
             rollTimer = new System.Windows.Forms.Timer(components);
+            rollSoundPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             gamePanel.SuspendLayout();
             shopPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).BeginInit();
             SuspendLayout();
             // 
             // continueFromShopButton
@@ -94,6 +97,7 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(rollSoundPlayer);
             gamePanel.Controls.Add(healthBar);
             gamePanel.Controls.Add(attackLabel);
             gamePanel.Controls.Add(incomingDamageLabel);
@@ -340,6 +344,16 @@
             rollTimer.Interval = 20;
             rollTimer.Tick += rollTimer_Tick;
             // 
+            // rollSoundPlayer
+            // 
+            rollSoundPlayer.Enabled = true;
+            rollSoundPlayer.Location = new Point(176, 262);
+            rollSoundPlayer.Name = "rollSoundPlayer";
+            rollSoundPlayer.OcxState = (AxHost.State)resources.GetObject("rollSoundPlayer.OcxState");
+            rollSoundPlayer.Size = new Size(75, 23);
+            rollSoundPlayer.TabIndex = 20;
+            rollSoundPlayer.Visible = false;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -356,6 +370,7 @@
             gamePanel.PerformLayout();
             shopPanel.ResumeLayout(false);
             shopPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).EndInit();
             ResumeLayout(false);
         }
 
@@ -391,5 +406,6 @@
         private ProgressBar healthBar;
         private ProgressBar healthBarShop;
         private System.Windows.Forms.Timer rollTimer;
+        private AxWMPLib.AxWindowsMediaPlayer rollSoundPlayer;
     }
 }

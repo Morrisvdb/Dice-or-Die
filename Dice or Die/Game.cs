@@ -1,21 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net.Mail;
-using System.Resources;
-using System.Runtime.CompilerServices;
+﻿using AxWMPLib;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Web;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Dice_or_Die
 {
@@ -29,10 +14,26 @@ namespace Dice_or_Die
 
         private const int dice_x = 100;
         private const int dice_y = 100;
+        private const int dice_number_font_size = 20;
+        private const int dice_rolling_font_size = 10;
 
         public Game()
         {
             InitializeComponent();
+        }
+
+        public void PlayStreamWithWMP(Stream audioStream, AxWindowsMediaPlayer player, int volume)
+        {
+            string tempFile = Path.GetTempFileName() + ".wav";
+            using (var fileStream = File.Create(tempFile))
+            {
+                audioStream.Seek(0, SeekOrigin.Begin);
+                audioStream.CopyTo(fileStream);
+            }
+
+            player.URL = tempFile;
+            player.settings.volume = volume;
+            player.Ctlcontrols.play();
         }
 
         private class Roll
@@ -94,7 +95,8 @@ namespace Dice_or_Die
             if (File.Exists(path))
             {
                 string json_ = File.ReadAllText(path);
-                PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
+                PlayerData? _data = JsonSerializer.Deserialize<PlayerData>(json_);
+
                 if (_data == null)
                 {
                     _data = new PlayerData { player_id = player_number };
@@ -107,8 +109,8 @@ namespace Dice_or_Die
             {
                 PlayerData _data = new PlayerData { player_id = player_number };
                 string json_out = JsonSerializer.Serialize(_data);
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
-                File.WriteAllText(path, json_out);
+                Directory.CreateDirectory(Path.GetDirectoryName(path ?? Path.GetTempPath()) ?? Path.GetTempPath());
+                File.WriteAllText(path ?? Path.GetTempPath(), json_out);
                 return _data;
             }
         }
@@ -118,7 +120,7 @@ namespace Dice_or_Die
             string path = Environment.SpecialFolder.CommonDocuments + @"\Dice or Die\player_" + data.player_id + "_data.json";
 
             string json_ = File.ReadAllText(path);
-            PlayerData _data = JsonSerializer.Deserialize<PlayerData>(json_);
+            PlayerData? _data = JsonSerializer.Deserialize<PlayerData>(json_);
             _data = data;
             string json_out = JsonSerializer.Serialize(_data);
             File.WriteAllText(path, json_out);
@@ -201,6 +203,7 @@ namespace Dice_or_Die
                 {
                     b.BackColor = Color.Yellow;
                     b.Text = die.Value.Key.ToString();
+                    b.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
                 }
                 else
                 {
@@ -208,19 +211,23 @@ namespace Dice_or_Die
                     if (noroll)
                     {
                         b.Text = die.Value.Key.ToString();
+                        b.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
                     } else
                     {
                         b.Text = "Rolling...";
+                        b.Font = new Font("Serif", dice_rolling_font_size);
                     }
                 }
                 current_buttons.Add(b);
                 gamePanel.Controls.Add(b);
                 x += size + 10;
             }
+            var d = dice;
         }
 
         private void animate_dice(int interval = 25, int loopCount = 25)
         {
+            PlayStreamWithWMP(new MemoryStream(Resource1.roll_dice_sound), rollSoundPlayer, volume = Menu.);
             rollTimer.Interval = 25;
             rollTimer.Enabled = true;
         }
@@ -237,8 +244,15 @@ namespace Dice_or_Die
             }
             if (current_rolling >= dice.Count)
             {
+                foreach (var die in current_buttons)
+                {
+                    die.Text = dice[die.Name].Key.ToString();
+                    die.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
+                }
+
                 current_rolling = 0;
                 rollTimer.Enabled = false;
+                rolldice_button.Enabled = true;
                 if (!switchSectionTick.Checked)
                 {
                     fill_rollbox_bottom();
@@ -260,6 +274,7 @@ namespace Dice_or_Die
             {
                 Button b = current_buttons[current_rolling];
                 b.Text = dice[b.Name].Key.ToString();
+                b.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
             }
             else
             {
@@ -267,6 +282,7 @@ namespace Dice_or_Die
                 Random random = new Random();
                 int value = random.Next(1, 7);
                 b.Text = value.ToString();
+                b.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
             }
         }
 
@@ -313,18 +329,18 @@ namespace Dice_or_Die
         {
             PlayerData data_ = GetPlayerData(current_player);
 
-            if (data_.roll_count == data_.max_rolls)
-            {
-                int coins = 0;
-                foreach (var die in dice)
-                {
-                    coins += die.Value.Key;
-                }
+            //if (data_.roll_count == data_.max_rolls)
+            //{
+            //    int coins = 0;
+            //    foreach (var die in dice)
+            //    {
+            //        coins += die.Value.Key;
+            //    }
 
-                payoutLabel.Visible = true;
-                payoutLabel.Text = "Payout: " + coins.ToString() + "$";
-                rolldice_button.Text = "Shop";
-            }
+            //    payoutLabel.Visible = true;
+            //    payoutLabel.Text = "Payout: " + coins.ToString() + "$";
+            //    rolldice_button.Text = "Shop";
+            //}
 
             if (data_.roll_count > data_.max_rolls)
             {
@@ -334,6 +350,7 @@ namespace Dice_or_Die
 
             if (data_.roll_count < data_.max_rolls)
             {
+                rolldice_button.Enabled = false;
                 roll_dice(data_.dice_count);
 
                 draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
@@ -350,6 +367,19 @@ namespace Dice_or_Die
 
             data_.roll_count++;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+
+            if (data_.roll_count == data_.max_rolls)
+            {
+                int coins = 0;
+                foreach (var die in dice)
+                {
+                    coins += die.Value.Key;
+                }
+
+                payoutLabel.Visible = true;
+                payoutLabel.Text = "Payout: " + coins.ToString() + "$";
+                rolldice_button.Text = "Shop";
+            }
 
             commit_player_value(data_);
         }
@@ -391,15 +421,25 @@ namespace Dice_or_Die
         {
             PlayerData player_data = GetPlayerData(current_player);
             string rolls_json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
-            List<Roll> _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
+            List<Roll>? _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
             string json_in_ = System.Text.Encoding.Default.GetString(Resource1.upgrades);
             json_in_ = json_in_.Trim('\uFEFF');
-            List<Upgrade> _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in_);
+            List<Upgrade>? _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in_);
+
+            if (_data == null || _rolls == null)
+            {
+                MessageBox.Show("Failed to load shop data.");
+                return;
+            }
 
             Random rand = new Random();
             List<Upgrade> selected_upgrades = new List<Upgrade>();
             for (int i = 0; i < 3; i++)
             {
+                if (_data.Count == 0)
+                {
+                    break;
+                }
                 int r = rand.Next(0, _data.Count);
                 selected_upgrades.Add(_data[r]);
                 _data.RemoveAt(r);
@@ -423,7 +463,11 @@ namespace Dice_or_Die
         private Roll fetch_roll(string name)
         {
             string json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
-            List<Roll> _data = JsonSerializer.Deserialize<List<Roll>>(json_in);
+            List<Roll>? _data = JsonSerializer.Deserialize<List<Roll>>(json_in);
+            if (_data == null)
+            {
+                return new Roll { name = "error", title = "Failed to fetch rolls" };
+            }
             foreach (var roll in _data)
             {
                 if (roll.name == name)
@@ -433,9 +477,9 @@ namespace Dice_or_Die
             }
             if (name == "none")
             {
-                return new Roll { name = "error", title = "HELP, SOMETHING IS VERY WRONG" };
+                return new Roll { name = "error", title = "Failed to fetch rolls" };
             }
-            return new Roll { name = "error", title = "HELP, SOMETHING IS VERY WRONG" };
+            return new Roll { name = "error", title = "Failed to fetch rolls" };
 
         }
 
@@ -465,8 +509,9 @@ namespace Dice_or_Die
             rollBox.Items.Clear();
             List<int> dicerow = to_dicerow();
             List<int> rolls = Countnumbers(dicerow);
+            PlayerData data = GetPlayerData(current_player);
             
-            if (rolls[0] > 0 )
+            if (rolls[0] > 0 && data.aces_used == 0)
             {
                 Roll roll_obj = fetch_roll("aces");
                 roll_obj.title += " (" + rolls[0].ToString() + ")";
@@ -474,34 +519,34 @@ namespace Dice_or_Die
                 rollBox.Items.Add(roll_obj);
             }
 
-            if (rolls[1] > 0)
+            if (rolls[1] > 0 && data.twos_used == 0)
             {
                 Roll roll_obj = fetch_roll("twos");
                 roll_obj.title += " (" + rolls[1].ToString() + ")";
                 rollBox.Items.Add(roll_obj);
             }
-            if (rolls[2] > 0)
+            if (rolls[2] > 0 && data.threes_used == 0)
             {
                 Roll roll_obj = fetch_roll("threes");
                 roll_obj.title += " (" + rolls[2].ToString() + ")";
                 rollBox.Items.Add(roll_obj);
             }
 
-            if (rolls[3] > 0)
+            if (rolls[3] > 0 && data.fours_used == 0)
             {
                 Roll roll_obj = fetch_roll("fours");
                 roll_obj.title += " (" + rolls[3].ToString() + ")";
                 rollBox.Items.Add(roll_obj);
             }
 
-            if (rolls[4] > 0)
+            if (rolls[4] > 0 && data.fives_used == 0)
             {
                 Roll roll_obj = fetch_roll("fives");
                 roll_obj.title += " (" + rolls[4].ToString() + ")";
                 rollBox.Items.Add(roll_obj);
             }
 
-            if (rolls[5] > 0)
+            if (rolls[5] > 0 && data.sixes_used == 0)
             {
                 Roll roll_obj = fetch_roll("sixes");
                 roll_obj.title += " (" + rolls[5].ToString() + ")";
@@ -691,16 +736,21 @@ namespace Dice_or_Die
 
         private void buyButton_Click(object sender, EventArgs e)
         {
-            int selected_index = upgradesBox.SelectedIndex;
-            Upgrade selected_value = (Upgrade)upgradesBox.SelectedItems[0];
-
-
-            if (selected_value == null)
+            if (upgradesBox.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Please select an upgrade");
                 return;
             }
-            Upgrade upgrade = selected_value;
+
+            int selected_index = upgradesBox.SelectedIndex;
+            Upgrade? selected_value = upgradesBox.SelectedItems[0] as Upgrade;
+
+            if (selected_value == null)
+            {
+                MessageBox.Show("Invalid selection");
+                return;
+            }
+
             if (!resolve_upgrade(selected_value))
             {
                 MessageBox.Show("Not enough money");
@@ -709,7 +759,6 @@ namespace Dice_or_Die
             {
                 upgradesBox.Items.RemoveAt(selected_index);
             }
-
         }
 
         private List<string> add_if_not_exists(List<string> list, string item)
@@ -794,6 +843,7 @@ namespace Dice_or_Die
                 dicerow.Add(0);
             }
             List<string> rolls = new List<string>();
+            #pragma warning disable CS0219 // Variable is assigned but its value is never used
             bool full_house = false;
             bool pair = false;
             bool three_of_a_kind = false;
@@ -801,6 +851,8 @@ namespace Dice_or_Die
             bool small_straight = false;
             bool large_straight = false;
             bool yathzee = false;
+            #pragma warning restore CS0219 // Variable is assigned but its value is never used
+
 
             if (dicerow[0] == dicerow[1] && dicerow[0] > 0 && dicerow[1] > 0 || dicerow[1] == dicerow[2] && dicerow[1] > 0 && dicerow[2] > 0 || dicerow[2] == dicerow[3] && dicerow[2] > 0 && dicerow[3] > 0 || dicerow[3] == dicerow[4] && dicerow[3] > 0 && dicerow[4] > 0)
             {
@@ -887,7 +939,7 @@ namespace Dice_or_Die
 
         private void useDiceButton_Click(object sender, EventArgs e)
         {
-            Roll roll = (Roll)rollBox.SelectedItem;
+            Roll? roll = rollBox.SelectedItem as Roll;
             if (roll == null)
             {
                 MessageBox.Show("Please select a roll");
@@ -897,7 +949,6 @@ namespace Dice_or_Die
             PlayerData data_ = GetPlayerData(current_player);
             PlayerData data_2 = GetPlayerData(current_player == 1 ? 2 : 1);
             data_.roll_count = 0;
-            //Roll roll = fetch_roll(selected_roll.name);
             int value = roll.value + roll.level * roll.schaling;
             switch (roll.effect_type)
             {
@@ -972,7 +1023,6 @@ namespace Dice_or_Die
                             data_.sixes_used += value;
                             data_.money += value * 2;
                             break;
-
                     }
 
                     if (data_.aces_used > 0 && data_.twos_used > 0 && data_.threes_used > 0 && data_.fours_used > 0 && data_.fives_used > 0 && data_.sixes_used > 0)
@@ -980,13 +1030,10 @@ namespace Dice_or_Die
                         int upper_total = data_.aces_used + data_.twos_used + data_.threes_used + data_.fours_used + data_.fives_used + data_.sixes_used;
                         if (upper_total >= 63)
                         {
-                            // Reward the upper bonus
                             data_.money += 250;
                         }
                     }
-
                     break;
-
             }
             data_.roll_count = data_.max_rolls;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();

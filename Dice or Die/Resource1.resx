@@ -128,6 +128,9 @@
     <value>Data\rolls.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     <comment>The file that stores the details and effects of all rolls</comment>
   </data>
+  <data name="roll_dice_sound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Dice Cup Sound Effect.wav;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="upgrades" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Data\upgrades.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     <comment>The file that stores all the upgrades and their effects</comment>
