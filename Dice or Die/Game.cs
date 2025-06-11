@@ -223,6 +223,7 @@ namespace Dice_or_Die
         {
             rollTimer.Interval = 25;
             rollTimer.Enabled = true;
+            rolldice_button.Enabled = false;
         }
 
         private void rollTimer_Tick(object sender, EventArgs e)
@@ -239,6 +240,7 @@ namespace Dice_or_Die
             {
                 current_rolling = 0;
                 rollTimer.Enabled = false;
+                rolldice_button.Enabled = true;
                 if (!switchSectionTick.Checked)
                 {
                     fill_rollbox_bottom();
