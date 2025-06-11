@@ -322,7 +322,7 @@ namespace Dice_or_Die
                 }
 
                 payoutLabel.Visible = true;
-                payoutLabel.Text = "Payout: " + coins.ToString() + "$";
+                payoutLabel.Text = "Payout: $" + coins.ToString();
                 rolldice_button.Text = "Shop";
             }
 
@@ -378,7 +378,7 @@ namespace Dice_or_Die
 
             gamePanel.Visible = false;
             shopPanel.Visible = true;
-            moneyLabelShop.Text = "Money: " + _data.money.ToString();
+            moneyLabelShop.Text = "Money: $" + _data.money.ToString();
             //healthLabelShop.Text = "Health: " + _data.health.ToString();
             setHealthBar(_data);
             attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
