@@ -34,6 +34,7 @@
             amountrolls_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            rollSoundPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             healthBar = new ProgressBar();
             attackLabel = new Label();
             incomingDamageLabel = new Label();
@@ -58,10 +59,9 @@
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
             rollTimer = new System.Windows.Forms.Timer(components);
-            rollSoundPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             gamePanel.SuspendLayout();
-            shopPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).BeginInit();
+            shopPanel.SuspendLayout();
             SuspendLayout();
             // 
             // continueFromShopButton
@@ -115,6 +115,16 @@
             gamePanel.Name = "gamePanel";
             gamePanel.Size = new Size(510, 352);
             gamePanel.TabIndex = 9;
+            // 
+            // rollSoundPlayer
+            // 
+            rollSoundPlayer.Enabled = true;
+            rollSoundPlayer.Location = new Point(176, 262);
+            rollSoundPlayer.Name = "rollSoundPlayer";
+            rollSoundPlayer.OcxState = (AxHost.State)resources.GetObject("rollSoundPlayer.OcxState");
+            rollSoundPlayer.Size = new Size(75, 23);
+            rollSoundPlayer.TabIndex = 20;
+            rollSoundPlayer.Visible = false;
             // 
             // healthBar
             // 
@@ -344,16 +354,6 @@
             rollTimer.Interval = 20;
             rollTimer.Tick += rollTimer_Tick;
             // 
-            // rollSoundPlayer
-            // 
-            rollSoundPlayer.Enabled = true;
-            rollSoundPlayer.Location = new Point(176, 262);
-            rollSoundPlayer.Name = "rollSoundPlayer";
-            rollSoundPlayer.OcxState = (AxHost.State)resources.GetObject("rollSoundPlayer.OcxState");
-            rollSoundPlayer.Size = new Size(75, 23);
-            rollSoundPlayer.TabIndex = 20;
-            rollSoundPlayer.Visible = false;
-            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -365,12 +365,13 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Game";
             Text = "game";
+            FormClosed += Game_FormClosed;
             Load += Game_Load;
             gamePanel.ResumeLayout(false);
             gamePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).EndInit();
             shopPanel.ResumeLayout(false);
             shopPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).EndInit();
             ResumeLayout(false);
         }
 

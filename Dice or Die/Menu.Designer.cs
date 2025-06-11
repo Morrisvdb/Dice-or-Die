@@ -34,13 +34,13 @@
             quitButton = new Button();
             settingsButton = new Button();
             resetGameButton = new Button();
-            axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayer1).BeginInit();
+            musicPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            ((System.ComponentModel.ISupportInitialize)musicPlayer).BeginInit();
             SuspendLayout();
             // 
             // playButton
             // 
-            playButton.Location = new Point(353, 90);
+            playButton.Location = new Point(355, 136);
             playButton.Name = "playButton";
             playButton.Size = new Size(94, 29);
             playButton.TabIndex = 0;
@@ -50,7 +50,7 @@
             // 
             // helpButton
             // 
-            helpButton.Location = new Point(353, 195);
+            helpButton.Location = new Point(355, 241);
             helpButton.Name = "helpButton";
             helpButton.Size = new Size(94, 29);
             helpButton.TabIndex = 1;
@@ -60,7 +60,7 @@
             // 
             // quitButton
             // 
-            quitButton.Location = new Point(353, 230);
+            quitButton.Location = new Point(355, 276);
             quitButton.Name = "quitButton";
             quitButton.Size = new Size(94, 29);
             quitButton.TabIndex = 2;
@@ -70,7 +70,7 @@
             // 
             // settingsButton
             // 
-            settingsButton.Location = new Point(353, 125);
+            settingsButton.Location = new Point(355, 171);
             settingsButton.Name = "settingsButton";
             settingsButton.Size = new Size(94, 29);
             settingsButton.TabIndex = 3;
@@ -80,7 +80,7 @@
             // 
             // resetGameButton
             // 
-            resetGameButton.Location = new Point(353, 160);
+            resetGameButton.Location = new Point(355, 206);
             resetGameButton.Name = "resetGameButton";
             resetGameButton.Size = new Size(94, 29);
             resetGameButton.TabIndex = 4;
@@ -88,22 +88,22 @@
             resetGameButton.UseVisualStyleBackColor = true;
             resetGameButton.Click += resetGameButton_Click;
             // 
-            // axWindowsMediaPlayer1
+            // musicPlayer
             // 
-            axWindowsMediaPlayer1.Enabled = true;
-            axWindowsMediaPlayer1.Location = new Point(63, 397);
-            axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            axWindowsMediaPlayer1.OcxState = (AxHost.State)resources.GetObject("axWindowsMediaPlayer1.OcxState");
-            axWindowsMediaPlayer1.Size = new Size(75, 23);
-            axWindowsMediaPlayer1.TabIndex = 5;
-            axWindowsMediaPlayer1.Visible = false;
+            musicPlayer.Enabled = true;
+            musicPlayer.Location = new Point(63, 397);
+            musicPlayer.Name = "musicPlayer";
+            musicPlayer.OcxState = (AxHost.State)resources.GetObject("musicPlayer.OcxState");
+            musicPlayer.Size = new Size(75, 23);
+            musicPlayer.TabIndex = 5;
+            musicPlayer.Visible = false;
             // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(axWindowsMediaPlayer1);
+            Controls.Add(musicPlayer);
             Controls.Add(resetGameButton);
             Controls.Add(settingsButton);
             Controls.Add(quitButton);
@@ -112,7 +112,7 @@
             Name = "Menu";
             Text = "Menu";
             Load += Menu_Load;
-            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayer1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)musicPlayer).EndInit();
             ResumeLayout(false);
         }
 
@@ -123,6 +123,6 @@
         private Button quitButton;
         private Button settingsButton;
         private Button resetGameButton;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private AxWMPLib.AxWindowsMediaPlayer musicPlayer;
     }
 }

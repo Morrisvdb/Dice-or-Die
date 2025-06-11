@@ -102,6 +102,16 @@ namespace Dice_or_Die {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] shared_image_red {
+            get {
+                object obj = ResourceManager.GetObject("shared_image_red", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] upgrades {
             get {
                 object obj = ResourceManager.GetObject("upgrades", resourceCulture);

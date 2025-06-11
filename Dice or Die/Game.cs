@@ -1,4 +1,6 @@
 ﻿using AxWMPLib;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
@@ -6,6 +8,7 @@ namespace Dice_or_Die
 {
     public partial class Game : Form
     {
+        private Menu menu;
         public Dictionary<string, KeyValuePair<int, bool>> dice = new Dictionary<string, KeyValuePair<int, bool>>(); // { button_name(string): { value{int}: locked{bool} } }
         private List<Button> current_buttons = new List<Button>();
         public int current_player = 1;
@@ -17,9 +20,10 @@ namespace Dice_or_Die
         private const int dice_number_font_size = 20;
         private const int dice_rolling_font_size = 10;
 
-        public Game()
+        public Game(Menu menu)
         {
             InitializeComponent();
+            this.menu = menu;
         }
 
         public void PlayStreamWithWMP(Stream audioStream, AxWindowsMediaPlayer player, int volume)
@@ -79,7 +83,7 @@ namespace Dice_or_Die
             public int used_small_straights { get; set; } = 0; // The number of small straights used
             public int used_large_straights { get; set; } = 0; // The number of large straights used
             public int used_yathzees { get; set; } = 0; // The number of yathzees used
-            public int aces_used{ get; set; } = 0; // The value of the aces   
+            public int aces_used { get; set; } = 0; // The value of the aces   
             public int twos_used { get; set; } = 0; // The value of the twos
             public int threes_used { get; set; } = 0; // The value of the threes
             public int fours_used { get; set; } = 0; // The value of the fours
@@ -134,7 +138,8 @@ namespace Dice_or_Die
                 if (File.Exists(path))
                 {
                     File.Delete(path);
-                } else
+                }
+                else
                 {
                     return;
                 }
@@ -158,7 +163,7 @@ namespace Dice_or_Die
         {
             dice.Clear();
             for (int i = 0; i < count; i++)
-            {   
+            {
                 dice.Add("die" + i.ToString(), new KeyValuePair<int, bool>(-1, false));
             }
         }
@@ -212,7 +217,8 @@ namespace Dice_or_Die
                     {
                         b.Text = die.Value.Key.ToString();
                         b.Font = new Font("Serif", dice_number_font_size, FontStyle.Bold);
-                    } else
+                    }
+                    else
                     {
                         b.Text = "Rolling...";
                         b.Font = new Font("Serif", dice_rolling_font_size);
@@ -227,7 +233,7 @@ namespace Dice_or_Die
 
         private void animate_dice(int interval = 25, int loopCount = 25)
         {
-            PlayStreamWithWMP(new MemoryStream(Resource1.roll_dice_sound), rollSoundPlayer, volume = Menu.);
+            PlayStreamWithWMP(new MemoryStream(Resource1.roll_dice_sound), rollSoundPlayer, volume: menu.sound_volume);
             rollTimer.Interval = 25;
             rollTimer.Enabled = true;
         }
@@ -510,7 +516,7 @@ namespace Dice_or_Die
             List<int> dicerow = to_dicerow();
             List<int> rolls = Countnumbers(dicerow);
             PlayerData data = GetPlayerData(current_player);
-            
+
             if (rolls[0] > 0 && data.aces_used == 0)
             {
                 Roll roll_obj = fetch_roll("aces");
@@ -843,7 +849,7 @@ namespace Dice_or_Die
                 dicerow.Add(0);
             }
             List<string> rolls = new List<string>();
-            #pragma warning disable CS0219 // Variable is assigned but its value is never used
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             bool full_house = false;
             bool pair = false;
             bool three_of_a_kind = false;
@@ -851,7 +857,7 @@ namespace Dice_or_Die
             bool small_straight = false;
             bool large_straight = false;
             bool yathzee = false;
-            #pragma warning restore CS0219 // Variable is assigned but its value is never used
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
 
             if (dicerow[0] == dicerow[1] && dicerow[0] > 0 && dicerow[1] > 0 || dicerow[1] == dicerow[2] && dicerow[1] > 0 && dicerow[2] > 0 || dicerow[2] == dicerow[3] && dicerow[2] > 0 && dicerow[3] > 0 || dicerow[3] == dicerow[4] && dicerow[3] > 0 && dicerow[4] > 0)
@@ -932,8 +938,15 @@ namespace Dice_or_Die
 
         private void returnToMenuButton_Click(object sender, EventArgs e)
         {
-            Menu menu = new Menu();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            AxWindowsMediaPlayer player = (AxWindowsMediaPlayer)menu.Controls.Find("musicPlayer", true).FirstOrDefault();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument.
+            menu.FadeOutMusic(1000, player);
+            menu.PlayTrackWithFadeIn(Resource1.menu_music, player, 1000, volume: menu.music_volume);
+#pragma warning restore CS8604 // Possible null reference argument.
             menu.Show();
+            //menu.Controls.Find("")
             this.Hide();
         }
 
@@ -1136,6 +1149,11 @@ namespace Dice_or_Die
             }
 
             bar.Refresh();
+        }
+
+        private void Game_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            menu.Close();
         }
     }
 
