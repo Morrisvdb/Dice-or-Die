@@ -29,10 +29,14 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Game));
             continueFromShopButton = new Button();
             amountrolls_label = new Label();
             rolldice_button = new Button();
             gamePanel = new Panel();
+            victorySoundPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            currentPlayerPicture = new PictureBox();
+            rollSoundPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             healthBar = new ProgressBar();
             attackLabel = new Label();
             incomingDamageLabel = new Label();
@@ -58,6 +62,9 @@
             returnToMenuButton = new Button();
             rollTimer = new System.Windows.Forms.Timer(components);
             gamePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)victorySoundPlayer).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)currentPlayerPicture).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).BeginInit();
             shopPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -94,6 +101,9 @@
             // 
             // gamePanel
             // 
+            gamePanel.Controls.Add(victorySoundPlayer);
+            gamePanel.Controls.Add(currentPlayerPicture);
+            gamePanel.Controls.Add(rollSoundPlayer);
             gamePanel.Controls.Add(healthBar);
             gamePanel.Controls.Add(attackLabel);
             gamePanel.Controls.Add(incomingDamageLabel);
@@ -109,8 +119,36 @@
             gamePanel.Controls.Add(amountrolls_label);
             gamePanel.Location = new Point(12, 27);
             gamePanel.Name = "gamePanel";
-            gamePanel.Size = new Size(510, 352);
+            gamePanel.Size = new Size(644, 352);
             gamePanel.TabIndex = 9;
+            // 
+            // victorySoundPlayer
+            // 
+            victorySoundPlayer.Enabled = true;
+            victorySoundPlayer.Location = new Point(176, 262);
+            victorySoundPlayer.Name = "victorySoundPlayer";
+            victorySoundPlayer.OcxState = (AxHost.State)resources.GetObject("victorySoundPlayer.OcxState");
+            victorySoundPlayer.Size = new Size(75, 23);
+            victorySoundPlayer.TabIndex = 22;
+            victorySoundPlayer.Visible = false;
+            // 
+            // currentPlayerPicture
+            // 
+            currentPlayerPicture.Location = new Point(441, 15);
+            currentPlayerPicture.Name = "currentPlayerPicture";
+            currentPlayerPicture.Size = new Size(200, 200);
+            currentPlayerPicture.TabIndex = 21;
+            currentPlayerPicture.TabStop = false;
+            // 
+            // rollSoundPlayer
+            // 
+            rollSoundPlayer.Enabled = true;
+            rollSoundPlayer.Location = new Point(176, 262);
+            rollSoundPlayer.Name = "rollSoundPlayer";
+            rollSoundPlayer.OcxState = (AxHost.State)resources.GetObject("rollSoundPlayer.OcxState");
+            rollSoundPlayer.Size = new Size(75, 23);
+            rollSoundPlayer.TabIndex = 20;
+            rollSoundPlayer.Visible = false;
             // 
             // healthBar
             // 
@@ -122,7 +160,7 @@
             // attackLabel
             // 
             attackLabel.AutoSize = true;
-            attackLabel.Location = new Point(348, 35);
+            attackLabel.Location = new Point(321, 35);
             attackLabel.Name = "attackLabel";
             attackLabel.Size = new Size(58, 20);
             attackLabel.TabIndex = 18;
@@ -227,7 +265,7 @@
             shopPanel.Controls.Add(moneyLabelShop);
             shopPanel.Controls.Add(upgradesBox);
             shopPanel.Controls.Add(continueFromShopButton);
-            shopPanel.Location = new Point(528, 27);
+            shopPanel.Location = new Point(662, 27);
             shopPanel.Name = "shopPanel";
             shopPanel.Size = new Size(498, 281);
             shopPanel.TabIndex = 10;
@@ -351,9 +389,13 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Game";
             Text = "game";
+            FormClosed += Game_FormClosed;
             Load += Game_Load;
             gamePanel.ResumeLayout(false);
             gamePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)victorySoundPlayer).EndInit();
+            ((System.ComponentModel.ISupportInitialize)currentPlayerPicture).EndInit();
+            ((System.ComponentModel.ISupportInitialize)rollSoundPlayer).EndInit();
             shopPanel.ResumeLayout(false);
             shopPanel.PerformLayout();
             ResumeLayout(false);
@@ -391,5 +433,8 @@
         private ProgressBar healthBar;
         private ProgressBar healthBarShop;
         private System.Windows.Forms.Timer rollTimer;
+        private AxWMPLib.AxWindowsMediaPlayer rollSoundPlayer;
+        private PictureBox currentPlayerPicture;
+        private AxWMPLib.AxWindowsMediaPlayer victorySoundPlayer;
     }
 }
