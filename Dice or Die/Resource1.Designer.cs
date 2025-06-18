@@ -71,11 +71,41 @@ namespace Dice_or_Die {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] damage_sound {
+            get {
+                object obj = ResourceManager.GetObject("damage_sound", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
         internal static System.IO.UnmanagedMemoryStream menu_music {
             get {
                 return ResourceManager.GetStream("menu_music", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap player1_icon {
+            get {
+                object obj = ResourceManager.GetObject("player1_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap player2_icon {
+            get {
+                object obj = ResourceManager.GetObject("player2_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -102,9 +132,9 @@ namespace Dice_or_Die {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] shared_image_red {
+        internal static byte[] shield_block_sound {
             get {
-                object obj = ResourceManager.GetObject("shared_image_red", resourceCulture);
+                object obj = ResourceManager.GetObject("shield_block_sound", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -115,6 +145,16 @@ namespace Dice_or_Die {
         internal static byte[] upgrades {
             get {
                 object obj = ResourceManager.GetObject("upgrades", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] victory_sound {
+            get {
+                object obj = ResourceManager.GetObject("victory_sound", resourceCulture);
                 return ((byte[])(obj));
             }
         }
