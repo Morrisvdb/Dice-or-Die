@@ -236,6 +236,7 @@ namespace Dice_or_Die
             PlayStreamWithWMP(new MemoryStream(Resource1.roll_dice_sound), rollSoundPlayer, volume: menu.sound_volume);
             rollTimer.Interval = 25;
             rollTimer.Enabled = true;
+            rolldice_button.Enabled = false;
         }
 
         private void rollTimer_Tick(object sender, EventArgs e)
@@ -335,7 +336,20 @@ namespace Dice_or_Die
         {
             PlayerData data_ = GetPlayerData(current_player);
 
-            if (data_.roll_count >= data_.max_rolls)
+            if (data_.roll_count == data_.max_rolls)
+            {
+                int coins = 0;
+                foreach (var die in dice)
+                {
+                    coins += die.Value.Key;
+                }
+
+                payoutLabel.Visible = true;
+                payoutLabel.Text = "Payout: $" + coins.ToString();
+                rolldice_button.Text = "Shop";
+            }
+
+            if (data_.roll_count > data_.max_rolls)
             {
                 start_shop();
                 return;
@@ -388,7 +402,7 @@ namespace Dice_or_Die
 
             gamePanel.Visible = false;
             shopPanel.Visible = true;
-            moneyLabelShop.Text = "Money: " + _data.money.ToString();
+            moneyLabelShop.Text = "Money: $" + _data.money.ToString();
             //healthLabelShop.Text = "Health: " + _data.health.ToString();
             setHealthBar(_data);
             attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
