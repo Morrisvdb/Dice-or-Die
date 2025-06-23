@@ -48,6 +48,7 @@ namespace Dice_or_Die
             public string effect_type { get; set; } = "none"; // The type of the effect
             public int value { get; set; } = 0; // The value of the effect
             public int schaling { get; set; } = 0; // The scaling of the effect
+            public string description { get; set; } = "none"; // The description of the roll
         }
 
         public class PlayerData
@@ -94,7 +95,7 @@ namespace Dice_or_Die
 
         public PlayerData GetPlayerData(int player_number)
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +  @"\Dice or Die\player_" + player_number + "_data.json";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Dice or Die\player_" + player_number + "_data.json";
 
             if (File.Exists(path))
             {
@@ -403,7 +404,6 @@ namespace Dice_or_Die
             gamePanel.Visible = false;
             shopPanel.Visible = true;
             moneyLabelShop.Text = "Money: $" + _data.money.ToString();
-            //healthLabelShop.Text = "Health: " + _data.health.ToString();
             setHealthBar(_data);
             attackLabelShop.Text = "Attack: " + _data.outgoing_damage.ToString();
             incomingDamageLabelShop.Text = "Incoming Damage: " + _data2.outgoing_damage.ToString();
@@ -444,14 +444,14 @@ namespace Dice_or_Die
                 upgrade.description += " (" + upgrade.cost + ")";
                 upgradesBox.Items.Add(upgrade);
             }
-            rollsUpgradeBox.Items.Clear();
-            rollsUpgradeBox.Items.Add(_rolls[8]);
-            rollsUpgradeBox.Items.Add(_rolls[9]);
-            rollsUpgradeBox.Items.Add(_rolls[10]);
-            rollsUpgradeBox.Items.Add(_rolls[11]);
-            rollsUpgradeBox.Items.Add(_rolls[12]);
-            rollsUpgradeBox.Items.Add(_rolls[13]);
-            rollsUpgradeBox.Items.Add(_rolls[14]);
+
+            List<Roll> upgradeableHands = [_rolls[8], _rolls[9], _rolls[10], _rolls[11], _rolls[12], _rolls[13], _rolls[14]];
+            foreach (var roll in upgradeableHands)
+            {
+                roll.description += "(100)";
+                rollsUpgradeBox.Items.Add(roll);
+            }
+
         }
 
         private Roll fetch_roll(string name)
@@ -649,7 +649,8 @@ namespace Dice_or_Die
             data_.is_turn = false;
             commit_player_value(data_);
             current_player = current_player == 1 ? 2 : 1;
-            setImageWithAutoScake(currentPlayerPicture, current_player == 1 ? Resource1.player1_icon : Resource1.player2_icon);
+
+            currentPlayerPicture.Image = current_player == 1 ? Resource1.player1_icon : Resource1.player2_icon;
             PlayerData data_2 = GetPlayerData(current_player);
             data_2.is_turn = true;
             commit_player_value(data_2);
@@ -701,30 +702,6 @@ namespace Dice_or_Die
 
         }
 
-        private void setImageWithAutoScake(PictureBox box, Bitmap image)
-        {
-
-            float x = image.Width;
-            float y = image.Height;
-
-            float scaleFactor;
-            if (y > x)
-            {
-                scaleFactor = y / 200; // Calculate scale factor based on height
-            }
-            else
-            {
-                scaleFactor = x / 200; // Calculate scale factor based on width
-            }
-
-            int scaledWidth = (int)(x / scaleFactor);
-            int scaledHeight = (int)(y / scaleFactor);
-            currentPlayerPicture.Size = new Size(scaledWidth, scaledHeight);
-
-            Bitmap scaledImage = Menu.ResizeImage(image, scaledWidth, scaledHeight);
-            currentPlayerPicture.Image = scaledImage;
-        }
-
         private void load_game()
         {
             PlayerData _data = GetPlayerData(current_player);
@@ -745,7 +722,7 @@ namespace Dice_or_Die
             }
             current_player = _data.player_id;
 
-            setImageWithAutoScake(currentPlayerPicture, current_player == 1 ? Resource1.player1_icon : Resource1.player2_icon);
+            currentPlayerPicture.Image = current_player == 1 ? Resource1.player1_icon : Resource1.player2_icon;
 
             commit_player_value(_data);
             if (_data.in_shop)
@@ -1086,7 +1063,7 @@ namespace Dice_or_Die
             commit_player_value(data_);
             commit_player_value(data_2);
             rollBox.Items.Clear();
-            
+
         }
 
         private void switchSectionTick_CheckedChanged(object sender, EventArgs e)
@@ -1187,6 +1164,18 @@ namespace Dice_or_Die
         private void Game_FormClosed(object sender, FormClosedEventArgs e)
         {
             menu.Close();
+        }
+
+        private void rollBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Roll? selectedRoll = rollBox.SelectedItem as Roll;
+            if (selectedRoll != null)
+            {
+                selectedRoll = fetch_roll(selectedRoll.name);
+                int value = selectedRoll.value + selectedRoll.level * selectedRoll.schaling;
+                spellDetailLabel.Text = selectedRoll.description.Replace("{var}", value.ToString());
+            }
+
         }
     }
 

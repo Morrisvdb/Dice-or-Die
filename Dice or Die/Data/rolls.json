@@ -59,7 +59,7 @@
   {
     "name": "pair",
     "title": "Pair",
-    "description": "A pair of dice with the same number",
+    "description": "Heal worth {var} points without exeding max health",
     "effect_type": "heal",
     "value": 2,
     "schaling": 2
@@ -67,7 +67,7 @@
   {
     "name": "three_of_a_kind",
     "title": "Three of a Kind",
-    "description": "Three dice with the same number",
+    "description": "Deal {var} damage to your opponent",
     "effect_type": "damage",
     "value": 3,
     "schaling": 1
@@ -75,7 +75,7 @@
   {
     "name": "four_of_a_kind",
     "title": "Four of a Kind",
-    "description": "Four dice with the same number",
+    "description": "Deal {var} damage to your opponent",
     "effect_type": "damage",
     "value": 4,
     "schaling": 1
@@ -83,7 +83,7 @@
   {
     "name": "full_house",
     "title": "Full House",
-    "description": "A pair and three of a kind",
+    "description": "Heal worth {var} points without exeding your max health",
     "effect_type": "heal",
     "value": 5,
     "schaling": 2
@@ -91,7 +91,7 @@
   {
     "name": "small_straight",
     "title": "Small Straight",
-    "description": "Four consecutive ascending numbers",
+    "description": "Have your opponent roll with one dice less next round",
     "effect_type": "reduce_dice",
     "value": 1,
     "schaling": 0
@@ -99,7 +99,7 @@
   {
     "name": "large_straight",
     "title": "Large Straight",
-    "description": "Five consecutive ascending numbers",
+    "description": "Roll with an extra dice next round.",
     "effect_type": "add_dice",
     "_comment": "add 1 die to the pool, if 6 dice are already equiped add 6 coins instead",
     "value": 1,
@@ -108,7 +108,7 @@
   {
     "name": "yathzee",
     "title": "Yathzee",
-    "description": "Five dice with the same number",
+    "description": "Deal {var} damage to your opponent",
     "effect_type": "damage",
     "value": 9,
     "schaling": 2
