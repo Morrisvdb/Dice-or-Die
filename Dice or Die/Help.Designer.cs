@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Help));
             Title_label = new Label();
-            GoBack = new Button();
+            Menu_button = new Button();
             explanation_label = new Label();
             next_button = new Button();
+            back_button = new Button();
             SuspendLayout();
             // 
             // Title_label
@@ -45,27 +45,27 @@
             Title_label.TabIndex = 0;
             Title_label.Text = "Contents";
             // 
-            // GoBack
+            // Menu_button
             // 
-            GoBack.Location = new Point(4, 4);
-            GoBack.Name = "GoBack";
-            GoBack.Size = new Size(75, 23);
-            GoBack.TabIndex = 1;
-            GoBack.Text = "Back";
-            GoBack.UseVisualStyleBackColor = true;
+            Menu_button.Location = new Point(4, 4);
+            Menu_button.Name = "Menu_button";
+            Menu_button.Size = new Size(75, 23);
+            Menu_button.TabIndex = 1;
+            Menu_button.Text = "Menu";
+            Menu_button.UseVisualStyleBackColor = true;
             // 
             // explanation_label
             // 
             explanation_label.AutoSize = true;
             explanation_label.Location = new Point(182, 81);
             explanation_label.Name = "explanation_label";
-            explanation_label.Size = new Size(259, 225);
+            explanation_label.Size = new Size(127, 75);
             explanation_label.TabIndex = 2;
-            explanation_label.Text = resources.GetString("explanation_label.Text");
+            explanation_label.Text = "1.  Gameplay Overview\r\n2.  Rules\r\n3.  Upper Section\r\n4.  Lower Section\r\n5.  Shop";
             // 
             // next_button
             // 
-            next_button.Location = new Point(422, 292);
+            next_button.Location = new Point(431, 308);
             next_button.Name = "next_button";
             next_button.Size = new Size(75, 23);
             next_button.TabIndex = 3;
@@ -73,14 +73,25 @@
             next_button.UseVisualStyleBackColor = true;
             next_button.Click += next_button_Click;
             // 
+            // back_button
+            // 
+            back_button.Location = new Point(83, 308);
+            back_button.Name = "back_button";
+            back_button.Size = new Size(75, 23);
+            back_button.TabIndex = 4;
+            back_button.Text = "Back";
+            back_button.UseVisualStyleBackColor = true;
+            back_button.Click += back_button_Click;
+            // 
             // Help
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 345);
+            Controls.Add(back_button);
             Controls.Add(next_button);
             Controls.Add(explanation_label);
-            Controls.Add(GoBack);
+            Controls.Add(Menu_button);
             Controls.Add(Title_label);
             Name = "Help";
             Text = "Help";
@@ -91,8 +102,9 @@
         #endregion
 
         private Label Title_label;
-        private Button GoBack;
+        private Button Menu_button;
         private Label explanation_label;
         private Button next_button;
+        private Button back_button;
     }
 }

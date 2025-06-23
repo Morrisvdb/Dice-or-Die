@@ -117,21 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="explanation_label.Text" xml:space="preserve">
-    <value>Start with 10 HP 
-Roll 5 dices 
-Choose your dices and reroll up to 3 times total 
-Perform actions based on your dice roll to: 
-    Attack 
-    Defend 
-    Clever Move 
-
-Optionally, buy items from the Shop 
-
-End of turn 
-The game ends when:  
-    A player reaches 0 HP 
-    All upper and lower section moves are used 
-    The player with the most HP wins</value>
-  </data>
 </root>
