@@ -12,9 +12,11 @@ namespace Dice_or_Die
 {
     public partial class Help : Form
     {
-        public Help()
+        private Menu menu;
+        public Help(Menu menu)
         {
             InitializeComponent();
+            this.menu = menu;
         }
 
         int page_number = 1;
@@ -78,6 +80,17 @@ namespace Dice_or_Die
             {
                 next_button.Enabled = true;
             }
+        }
+
+        private void Menu_button_Click(object sender, EventArgs e)
+        {
+            menu.Show();
+            this.Hide();
+        }
+
+        private void Help_Load(object sender, EventArgs e)
+        {
+            back_button.Enabled = false;
         }
     }
 }

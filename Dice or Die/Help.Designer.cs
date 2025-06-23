@@ -53,6 +53,7 @@
             Menu_button.TabIndex = 1;
             Menu_button.Text = "Menu";
             Menu_button.UseVisualStyleBackColor = true;
+            Menu_button.Click += Menu_button_Click;
             // 
             // explanation_label
             // 
@@ -95,6 +96,7 @@
             Controls.Add(Title_label);
             Name = "Help";
             Text = "Help";
+            Load += Help_Load;
             ResumeLayout(false);
             PerformLayout();
         }

@@ -31,7 +31,9 @@ namespace Dice_or_Die
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-
+            Help help = new Help(this);
+            help.Show();
+            this.Hide();
         }
 
         private void quitButton_Click(object sender, EventArgs e)
