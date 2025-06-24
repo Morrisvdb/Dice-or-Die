@@ -26,7 +26,9 @@ namespace Dice_or_Die
 
         private void settingsButton_Click(object sender, EventArgs e)
         {
-
+            Settings settings = new Settings(this);
+            settings.Show();
+            this.Hide();
         }
 
         private void helpButton_Click(object sender, EventArgs e)
