@@ -52,6 +52,7 @@
             shopPanel = new Panel();
             healthBarShop = new ProgressBar();
             upgradeRollButton = new Button();
+            rollsUpgradeBox = new ListBox();
             incomingDamageLabelShop = new Label();
             attackLabelShop = new Label();
             healthLabelShop = new Label();
@@ -61,7 +62,6 @@
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
             rollTimer = new System.Windows.Forms.Timer(components);
-            rollsUpgradeBox = new ListBox();
             gamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)victorySoundPlayer).BeginInit();
             ((System.ComponentModel.ISupportInitialize)currentPlayerPicture).BeginInit();
@@ -287,7 +287,7 @@
             shopPanel.Controls.Add(moneyLabelShop);
             shopPanel.Controls.Add(upgradesBox);
             shopPanel.Controls.Add(continueFromShopButton);
-            shopPanel.Location = new Point(686, 20);
+            shopPanel.Location = new Point(10, 22);
             shopPanel.Margin = new Padding(3, 2, 3, 2);
             shopPanel.Name = "shopPanel";
             shopPanel.Size = new Size(620, 265);
@@ -313,6 +313,18 @@
             upgradeRollButton.UseVisualStyleBackColor = true;
             upgradeRollButton.Visible = false;
             upgradeRollButton.Click += upgradeRollButton_Click;
+            // 
+            // rollsUpgradeBox
+            // 
+            rollsUpgradeBox.DisplayMember = "title";
+            rollsUpgradeBox.FormattingEnabled = true;
+            rollsUpgradeBox.ItemHeight = 15;
+            rollsUpgradeBox.Location = new Point(314, 58);
+            rollsUpgradeBox.Margin = new Padding(3, 2, 3, 2);
+            rollsUpgradeBox.Name = "rollsUpgradeBox";
+            rollsUpgradeBox.Size = new Size(120, 79);
+            rollsUpgradeBox.TabIndex = 18;
+            rollsUpgradeBox.Visible = false;
             // 
             // incomingDamageLabelShop
             // 
@@ -399,23 +411,11 @@
             rollTimer.Interval = 20;
             rollTimer.Tick += rollTimer_Tick;
             // 
-            // rollsUpgradeBox
-            // 
-            rollsUpgradeBox.DisplayMember = "title";
-            rollsUpgradeBox.FormattingEnabled = true;
-            rollsUpgradeBox.ItemHeight = 15;
-            rollsUpgradeBox.Location = new Point(314, 58);
-            rollsUpgradeBox.Margin = new Padding(3, 2, 3, 2);
-            rollsUpgradeBox.Name = "rollsUpgradeBox";
-            rollsUpgradeBox.Size = new Size(120, 79);
-            rollsUpgradeBox.TabIndex = 18;
-            rollsUpgradeBox.Visible = false;
-            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1551, 293);
+            ClientSize = new Size(642, 293);
             Controls.Add(shopPanel);
             Controls.Add(returnToMenuButton);
             Controls.Add(gamePanel);
