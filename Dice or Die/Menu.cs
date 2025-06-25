@@ -9,7 +9,9 @@ namespace Dice_or_Die
     {
         public int sound_volume = 50; // Default volume level - Can be changed in setting, will revert after game restart
         public int music_volume = 30; // Default music volume level - Can be changed in setting, will revert after game restart
-        
+        public int roll_time = 10; // Default roll time in seconds - Can be changed in setting, will revert after game restart
+
+
         public Menu()
         {
             InitializeComponent();

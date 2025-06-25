@@ -241,7 +241,7 @@ namespace Dice_or_Die
 
         private void rollTimer_Tick(object sender, EventArgs e)
         {
-            int roll_count = 10;
+            int roll_count = menu.roll_time;
             tick_count++;
             if (tick_count >= roll_count)
             {
@@ -763,6 +763,7 @@ namespace Dice_or_Die
             else
             {
                 upgradesBox.Items.RemoveAt(selected_index);
+                PlayStreamWithWMP(new MemoryStream(Resource1.buysound), rollSoundPlayer, volume: menu.sound_volume);
             }
         }
 
@@ -895,7 +896,8 @@ namespace Dice_or_Die
                 pair = true;
             }
 
-            if (three_of_a_kind && dicerow[0] == dicerow[1] && dicerow[1] != dicerow[2] || three_of_a_kind && dicerow[1] == dicerow[2] && dicerow[2] != dicerow[3] || three_of_a_kind && dicerow[2] == dicerow[3] && dicerow[3] != dicerow[4])
+            var groups = dicerow.GroupBy(x => x).Where(g => g.Key > 0).Select(g => g.Count()).OrderByDescending(c => c).ToList();
+            if (groups.Count >= 2 && groups[0] == 3 && groups[1] == 2)
             {
                 rolls = add_if_not_exists(rolls, "full_house");
                 full_house = true;
@@ -1041,10 +1043,31 @@ namespace Dice_or_Die
                     if (data_.aces_used > 0 && data_.twos_used > 0 && data_.threes_used > 0 && data_.fours_used > 0 && data_.fives_used > 0 && data_.sixes_used > 0)
                     {
                         int upper_total = data_.aces_used + data_.twos_used + data_.threes_used + data_.fours_used + data_.fives_used + data_.sixes_used;
+
                         if (upper_total >= 63)
                         {
-                            data_.money += 250;
+                            coins = 100;
                         }
+                        else
+                        {
+                            if (upper_total > 42)
+                            {
+                                coins = 15;
+                            }
+                            else
+                            {
+                                if (upper_total > 21)
+                                {
+                                    coins = 10;
+                                }
+                                else
+                                {
+                                    coins = 5;
+                                }
+                            }
+                        }
+
+
                     }
                     break;
             }
