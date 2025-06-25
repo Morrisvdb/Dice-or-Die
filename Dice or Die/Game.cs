@@ -229,7 +229,6 @@ namespace Dice_or_Die
                 gamePanel.Controls.Add(b);
                 x += size + 10;
             }
-            var d = dice;
         }
 
         private void animate_dice(int interval = 25, int loopCount = 25)
@@ -414,13 +413,13 @@ namespace Dice_or_Die
         private void populate_shop()
         {
             PlayerData player_data = GetPlayerData(current_player);
-            string rolls_json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
-            List<Roll>? _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
+            //string rolls_json_in = System.Text.Encoding.Default.GetString(Resource1.rolls);
+            //List<Roll>? _rolls = JsonSerializer.Deserialize<List<Roll>>(rolls_json_in);
             string json_in_ = System.Text.Encoding.Default.GetString(Resource1.upgrades);
             json_in_ = json_in_.Trim('\uFEFF');
             List<Upgrade>? _data = JsonSerializer.Deserialize<List<Upgrade>>(json_in_);
 
-            if (_data == null || _rolls == null)
+            if (_data == null)
             {
                 MessageBox.Show("Failed to load shop data.");
                 return;
@@ -445,12 +444,12 @@ namespace Dice_or_Die
                 upgradesBox.Items.Add(upgrade);
             }
 
-            List<Roll> upgradeableHands = [_rolls[8], _rolls[9], _rolls[10], _rolls[11], _rolls[12], _rolls[13], _rolls[14]];
-            foreach (var roll in upgradeableHands)
-            {
-                roll.description += "(100)";
-                rollsUpgradeBox.Items.Add(roll);
-            }
+            //List<Roll> upgradeableHands = [_rolls[8], _rolls[9], _rolls[10], _rolls[11], _rolls[12], _rolls[13], _rolls[14]];
+            //foreach (var roll in upgradeableHands)
+            //{
+            //    roll.description += "(100)";
+            //    rollsUpgradeBox.Items.Add(roll);
+            //}
 
         }
 

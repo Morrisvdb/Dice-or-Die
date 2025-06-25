@@ -92,5 +92,10 @@ namespace Dice_or_Die
         {
             back_button.Enabled = false;
         }
+
+        private void Help_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            menu.Close();
+        }
     }
 }

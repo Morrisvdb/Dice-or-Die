@@ -35,6 +35,7 @@
             music_sound_button = new Button();
             effect_sound_button = new Button();
             menu_button = new Button();
+            updateSoundButton = new Button();
             ((System.ComponentModel.ISupportInitialize)music_bar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)sound_effects_bar).BeginInit();
             SuspendLayout();
@@ -103,9 +104,19 @@
             menu_button.Name = "menu_button";
             menu_button.Size = new Size(75, 23);
             menu_button.TabIndex = 6;
-            menu_button.Text = "menu";
+            menu_button.Text = "Menu";
             menu_button.UseVisualStyleBackColor = true;
             menu_button.Click += menu_button_Click;
+            // 
+            // updateSoundButton
+            // 
+            updateSoundButton.Location = new Point(592, 264);
+            updateSoundButton.Name = "updateSoundButton";
+            updateSoundButton.Size = new Size(75, 23);
+            updateSoundButton.TabIndex = 7;
+            updateSoundButton.Text = "Save";
+            updateSoundButton.UseVisualStyleBackColor = true;
+            updateSoundButton.Click += updateSoundButton_Click;
             // 
             // Settings
             // 
@@ -113,6 +124,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSkyBlue;
             ClientSize = new Size(800, 317);
+            Controls.Add(updateSoundButton);
             Controls.Add(menu_button);
             Controls.Add(effect_sound_button);
             Controls.Add(music_sound_button);
@@ -122,6 +134,8 @@
             Controls.Add(music_bar);
             Name = "Settings";
             Text = "Settings";
+            FormClosed += Settings_FormClosed;
+            Load += Settings_Load;
             ((System.ComponentModel.ISupportInitialize)music_bar).EndInit();
             ((System.ComponentModel.ISupportInitialize)sound_effects_bar).EndInit();
             ResumeLayout(false);
@@ -137,5 +151,6 @@
         private Button music_sound_button;
         private Button effect_sound_button;
         private Button menu_button;
+        private Button updateSoundButton;
     }
 }

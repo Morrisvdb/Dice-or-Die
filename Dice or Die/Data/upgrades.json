@@ -20,14 +20,6 @@
     "upgrade_type": "growth",
     "value": 2
   },
-  //{
-  //  "name": "Upgrade Roll",
-  //  "description": "Upgrade Roll",
-  //  "cost": 120,
-  //  "upgrade_type": "upgrade-roll",
-  //  "value": 2,
-  //  "_comment": "high_roll: 1, pair: 2, 3oak: 3, full_house: 4, 4oak:5, 5oak: 6, ss: 7, ls: 8"
-  //},
   {
     "name": "Blade of Fate",
     "description": "Attack your opponent for 3 damage",
