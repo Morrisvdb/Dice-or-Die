@@ -53,6 +53,7 @@ namespace Dice_or_Die
 
         private void Menu_Load(object sender, EventArgs e)
         {
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             PlayStreamWithWMP(Resource1.menu_music, musicPlayer, volume: music_volume);
         }
 
