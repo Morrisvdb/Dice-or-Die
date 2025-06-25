@@ -328,7 +328,7 @@ namespace Dice_or_Die
                 //b.BackColor = die.Value ? Color.LightGray : Color.LightGreen;
                 int x = diceLabel.Location.X;
                 int y = diceLabel.Location.Y;
-                draw_dice(x: x, y: y, count: data_.dice_count, noroll: true);
+                draw_dice(x: x, y: y, count: data_.dice_count + data_.dice_count_mod, noroll: true);
 
             }
         }
@@ -347,6 +347,7 @@ namespace Dice_or_Die
 
                 payoutLabel.Visible = true;
                 payoutLabel.Text = "Payout: $" + coins.ToString();
+                data_.money += coins;
                 rolldice_button.Text = "Shop";
             }
 
@@ -359,9 +360,9 @@ namespace Dice_or_Die
             if (data_.roll_count < data_.max_rolls)
             {
                 rolldice_button.Enabled = false;
-                roll_dice(data_.dice_count);
+                roll_dice(data_.dice_count + data_.dice_count_mod);
 
-                draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count);
+                draw_dice(x: diceLabel.Location.X, y: diceLabel.Location.Y, count: data_.dice_count + data_.dice_count_mod);
             }
 
             data_.roll_count++;
@@ -627,6 +628,7 @@ namespace Dice_or_Die
             gamePanel.Visible = true;
             shopPanel.Visible = false;
             _data.roll_count = 0;
+            _data.dice_count_mod = 0;
             useDiceButton.Enabled = true;
             payoutLabel.Visible = false;
 
@@ -1004,6 +1006,9 @@ namespace Dice_or_Die
                 case "reduce_dice":
                     data_2.dice_count_mod -= value;
                     break;
+                case "add_dice":
+                    data_.dice_count_mod += value;
+                    break;
                 case "coins-top":
                     switch (roll.name)
                     {
@@ -1095,6 +1100,7 @@ namespace Dice_or_Die
             data_.roll_count = data_.max_rolls;
             payoutLabel.Visible = true;
             payoutLabel.Text = "Payout: " + coins.ToString() + "$";
+            data_.money += coins;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
             rolldice_button.Text = "Shop";
             rolldice_button.Enabled = true;

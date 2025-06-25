@@ -193,7 +193,7 @@
             payoutLabel.AutoSize = true;
             payoutLabel.Location = new Point(265, 235);
             payoutLabel.Name = "payoutLabel";
-            payoutLabel.Size = new Size(56, 15);
+            payoutLabel.Size = new Size(67, 20);
             payoutLabel.TabIndex = 15;
             payoutLabel.Text = "Payout: x";
             payoutLabel.Visible = false;
@@ -397,7 +397,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(642, 293);
+            ClientSize = new Size(729, 385);
             Controls.Add(shopPanel);
             Controls.Add(returnToMenuButton);
             Controls.Add(gamePanel);
