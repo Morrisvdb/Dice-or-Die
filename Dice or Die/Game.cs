@@ -205,6 +205,7 @@ namespace Dice_or_Die
                 b.Size = new Size(size, size);
                 b.Location = new Point(x, y);
                 b.Click += dice_OnClick;
+                b.BringToFront();
                 if (die.Value.Value)
                 {
                     b.BackColor = Color.Yellow;
@@ -637,6 +638,7 @@ namespace Dice_or_Die
 
         private void Game_Load(object sender, EventArgs e)
         {
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             PlayerData data_ = GetPlayerData(current_player);
             init_dice(data_.dice_count);
             load_game();
@@ -683,9 +685,24 @@ namespace Dice_or_Die
         {
             PlayerData data_ = GetPlayerData(current_player);
             PlayerData data_2 = GetPlayerData(current_player == 1 ? 2 : 1);
+
+            if (data_.roll_count > data_.max_rolls)
+            {
+                start_shop();
+                return;
+            }
+
             gamePanel.Visible = true;
             shopPanel.Visible = false;
             amountrolls_label.Text = "Rolls Left: " + (data_.max_rolls - data_.roll_count).ToString();
+            if (data_.roll_count == data_.max_rolls)
+            {
+                rolldice_button.Text = "Shop";
+            }
+            else
+            {
+                rolldice_button.Text = "Roll";
+            }
             currentPlayerLabel.Text = "Current Player: " + data_.player_id.ToString();
             rolldice_button.Text = "Roll";
             moneyLabel.Text = "Money: " + data_.money.ToString();
