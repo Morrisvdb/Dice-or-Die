@@ -47,9 +47,10 @@
             // playButton
             // 
             playButton.BackColor = SystemColors.HighlightText;
-            playButton.Location = new Point(340, 207);
+            playButton.Location = new Point(298, 155);
+            playButton.Margin = new Padding(3, 2, 3, 2);
             playButton.Name = "playButton";
-            playButton.Size = new Size(94, 29);
+            playButton.Size = new Size(82, 22);
             playButton.TabIndex = 0;
             playButton.Text = "Play";
             playButton.UseVisualStyleBackColor = false;
@@ -58,9 +59,10 @@
             // helpButton
             // 
             helpButton.BackColor = SystemColors.HighlightText;
-            helpButton.Location = new Point(340, 312);
+            helpButton.Location = new Point(298, 234);
+            helpButton.Margin = new Padding(3, 2, 3, 2);
             helpButton.Name = "helpButton";
-            helpButton.Size = new Size(94, 29);
+            helpButton.Size = new Size(82, 22);
             helpButton.TabIndex = 1;
             helpButton.Text = "Help";
             helpButton.UseVisualStyleBackColor = false;
@@ -69,9 +71,10 @@
             // quitButton
             // 
             quitButton.BackColor = SystemColors.HighlightText;
-            quitButton.Location = new Point(340, 347);
+            quitButton.Location = new Point(298, 260);
+            quitButton.Margin = new Padding(3, 2, 3, 2);
             quitButton.Name = "quitButton";
-            quitButton.Size = new Size(94, 29);
+            quitButton.Size = new Size(82, 22);
             quitButton.TabIndex = 2;
             quitButton.Text = "Quit";
             quitButton.UseVisualStyleBackColor = false;
@@ -80,9 +83,10 @@
             // settingsButton
             // 
             settingsButton.BackColor = SystemColors.HighlightText;
-            settingsButton.Location = new Point(340, 242);
+            settingsButton.Location = new Point(298, 182);
+            settingsButton.Margin = new Padding(3, 2, 3, 2);
             settingsButton.Name = "settingsButton";
-            settingsButton.Size = new Size(94, 29);
+            settingsButton.Size = new Size(82, 22);
             settingsButton.TabIndex = 3;
             settingsButton.Text = "Settings";
             settingsButton.UseVisualStyleBackColor = false;
@@ -91,9 +95,10 @@
             // resetGameButton
             // 
             resetGameButton.BackColor = SystemColors.HighlightText;
-            resetGameButton.Location = new Point(340, 277);
+            resetGameButton.Location = new Point(298, 208);
+            resetGameButton.Margin = new Padding(3, 2, 3, 2);
             resetGameButton.Name = "resetGameButton";
-            resetGameButton.Size = new Size(94, 29);
+            resetGameButton.Size = new Size(82, 22);
             resetGameButton.TabIndex = 4;
             resetGameButton.Text = "Reset";
             resetGameButton.UseVisualStyleBackColor = false;
@@ -103,6 +108,7 @@
             // 
             musicPlayer.Enabled = true;
             musicPlayer.Location = new Point(63, 397);
+            musicPlayer.Margin = new Padding(3, 2, 3, 2);
             musicPlayer.Name = "musicPlayer";
             musicPlayer.OcxState = (AxHost.State)resources.GetObject("musicPlayer.OcxState");
             musicPlayer.Size = new Size(75, 23);
@@ -112,9 +118,10 @@
             // pictureBox1
             // 
             pictureBox1.Image = Resource1.Image;
-            pictureBox1.Location = new Point(183, 2);
+            pictureBox1.Location = new Point(163, 1);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(420, 208);
+            pictureBox1.Size = new Size(368, 156);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 6;
             pictureBox1.TabStop = false;
@@ -122,27 +129,29 @@
             // pictureBox2
             // 
             pictureBox2.Image = Resource1.player1_icon;
-            pictureBox2.Location = new Point(28, 104);
+            pictureBox2.Location = new Point(24, 78);
+            pictureBox2.Margin = new Padding(3, 2, 3, 2);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(125, 62);
+            pictureBox2.Size = new Size(109, 46);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 7;
             pictureBox2.TabStop = false;
             // 
             // pictureBox3
             // 
-            pictureBox3.Location = new Point(567, 349);
+            pictureBox3.Location = new Point(496, 262);
+            pictureBox3.Margin = new Padding(3, 2, 3, 2);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(125, 62);
+            pictureBox3.Size = new Size(109, 46);
             pictureBox3.TabIndex = 8;
             pictureBox3.TabStop = false;
             // 
             // Menu
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSkyBlue;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(700, 338);
             Controls.Add(pictureBox3);
             Controls.Add(pictureBox2);
             Controls.Add(musicPlayer);
@@ -152,6 +161,7 @@
             Controls.Add(helpButton);
             Controls.Add(playButton);
             Controls.Add(pictureBox1);
+            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "Menu";
             Text = "Menu";
@@ -170,9 +180,9 @@
         private Button quitButton;
         private Button settingsButton;
         private Button resetGameButton;
-        private AxWMPLib.AxWindowsMediaPlayer musicPlayer;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
+        public AxWMPLib.AxWindowsMediaPlayer musicPlayer;
     }
 }

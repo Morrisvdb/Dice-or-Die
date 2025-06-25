@@ -96,6 +96,7 @@
             Controls.Add(Title_label);
             Name = "Help";
             Text = "Help";
+            FormClosed += Help_FormClosed;
             Load += Help_Load;
             ResumeLayout(false);
             PerformLayout();

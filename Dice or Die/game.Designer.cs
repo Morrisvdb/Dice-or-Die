@@ -52,7 +52,6 @@
             shopPanel = new Panel();
             healthBarShop = new ProgressBar();
             upgradeRollButton = new Button();
-            rollsUpgradeBox = new ListBox();
             incomingDamageLabelShop = new Label();
             attackLabelShop = new Label();
             healthLabelShop = new Label();
@@ -62,6 +61,7 @@
             upgradesBox = new ListBox();
             returnToMenuButton = new Button();
             rollTimer = new System.Windows.Forms.Timer(components);
+            rollsUpgradeBox = new ListBox();
             gamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)victorySoundPlayer).BeginInit();
             ((System.ComponentModel.ISupportInitialize)currentPlayerPicture).BeginInit();
@@ -71,9 +71,10 @@
             // 
             // continueFromShopButton
             // 
-            continueFromShopButton.Location = new Point(174, 231);
+            continueFromShopButton.Location = new Point(152, 173);
+            continueFromShopButton.Margin = new Padding(3, 2, 3, 2);
             continueFromShopButton.Name = "continueFromShopButton";
-            continueFromShopButton.Size = new Size(94, 29);
+            continueFromShopButton.Size = new Size(82, 22);
             continueFromShopButton.TabIndex = 0;
             continueFromShopButton.Text = "Continue";
             continueFromShopButton.UseVisualStyleBackColor = true;
@@ -82,19 +83,18 @@
             // amountrolls_label
             // 
             amountrolls_label.AutoSize = true;
-            amountrolls_label.Location = new Point(429, 297);
+            amountrolls_label.Location = new Point(375, 223);
             amountrolls_label.Name = "amountrolls_label";
-            amountrolls_label.Size = new Size(17, 20);
+            amountrolls_label.Size = new Size(13, 15);
             amountrolls_label.TabIndex = 7;
             amountrolls_label.Text = "3";
             // 
             // rolldice_button
             // 
             rolldice_button.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            rolldice_button.Location = new Point(265, 288);
-            rolldice_button.Margin = new Padding(3, 4, 3, 4);
+            rolldice_button.Location = new Point(232, 216);
             rolldice_button.Name = "rolldice_button";
-            rolldice_button.Size = new Size(86, 44);
+            rolldice_button.Size = new Size(75, 33);
             rolldice_button.TabIndex = 5;
             rolldice_button.Text = "Roll";
             rolldice_button.UseVisualStyleBackColor = true;
@@ -119,16 +119,17 @@
             gamePanel.Controls.Add(healthLabel);
             gamePanel.Controls.Add(rolldice_button);
             gamePanel.Controls.Add(amountrolls_label);
-            gamePanel.Location = new Point(12, 27);
+            gamePanel.Location = new Point(10, 20);
+            gamePanel.Margin = new Padding(3, 2, 3, 2);
             gamePanel.Name = "gamePanel";
-            gamePanel.Size = new Size(708, 352);
+            gamePanel.Size = new Size(620, 264);
             gamePanel.TabIndex = 9;
             // 
             // spellDetailLabel
             // 
-            spellDetailLabel.Location = new Point(6, 20);
+            spellDetailLabel.Location = new Point(5, 15);
             spellDetailLabel.Name = "spellDetailLabel";
-            spellDetailLabel.Size = new Size(119, 134);
+            spellDetailLabel.Size = new Size(104, 100);
             spellDetailLabel.TabIndex = 24;
             spellDetailLabel.Text = "Select a roll to see its details.";
             spellDetailLabel.TextAlign = ContentAlignment.TopCenter;
@@ -137,6 +138,7 @@
             // 
             victorySoundPlayer.Enabled = true;
             victorySoundPlayer.Location = new Point(243, 262);
+            victorySoundPlayer.Margin = new Padding(3, 2, 3, 2);
             victorySoundPlayer.Name = "victorySoundPlayer";
             victorySoundPlayer.OcxState = (AxHost.State)resources.GetObject("victorySoundPlayer.OcxState");
             victorySoundPlayer.Size = new Size(75, 23);
@@ -145,9 +147,10 @@
             // 
             // currentPlayerPicture
             // 
-            currentPlayerPicture.Location = new Point(505, 15);
+            currentPlayerPicture.Location = new Point(442, 11);
+            currentPlayerPicture.Margin = new Padding(3, 2, 3, 2);
             currentPlayerPicture.Name = "currentPlayerPicture";
-            currentPlayerPicture.Size = new Size(200, 200);
+            currentPlayerPicture.Size = new Size(175, 150);
             currentPlayerPicture.SizeMode = PictureBoxSizeMode.Zoom;
             currentPlayerPicture.TabIndex = 21;
             currentPlayerPicture.TabStop = false;
@@ -156,6 +159,7 @@
             // 
             rollSoundPlayer.Enabled = true;
             rollSoundPlayer.Location = new Point(243, 262);
+            rollSoundPlayer.Margin = new Padding(3, 2, 3, 2);
             rollSoundPlayer.Name = "rollSoundPlayer";
             rollSoundPlayer.OcxState = (AxHost.State)resources.GetObject("rollSoundPlayer.OcxState");
             rollSoundPlayer.Size = new Size(75, 23);
@@ -164,35 +168,37 @@
             // 
             // healthBar
             // 
-            healthBar.Location = new Point(209, 35);
+            healthBar.Location = new Point(183, 26);
+            healthBar.Margin = new Padding(3, 2, 3, 2);
             healthBar.Name = "healthBar";
-            healthBar.Size = new Size(125, 20);
+            healthBar.Size = new Size(109, 15);
             healthBar.TabIndex = 19;
             // 
             // attackLabel
             // 
             attackLabel.AutoSize = true;
-            attackLabel.Location = new Point(388, 35);
+            attackLabel.Location = new Point(340, 26);
             attackLabel.Name = "attackLabel";
-            attackLabel.Size = new Size(58, 20);
+            attackLabel.Size = new Size(47, 15);
             attackLabel.TabIndex = 18;
             attackLabel.Text = "Attack: ";
             // 
             // incomingDamageLabel
             // 
             incomingDamageLabel.AutoSize = true;
-            incomingDamageLabel.Location = new Point(143, 78);
+            incomingDamageLabel.Location = new Point(125, 58);
             incomingDamageLabel.Name = "incomingDamageLabel";
-            incomingDamageLabel.Size = new Size(132, 20);
+            incomingDamageLabel.Size = new Size(105, 15);
             incomingDamageLabel.TabIndex = 17;
             incomingDamageLabel.Text = "Incoming Damage";
             // 
             // switchSectionTick
             // 
             switchSectionTick.AutoSize = true;
-            switchSectionTick.Location = new Point(100, 292);
+            switchSectionTick.Location = new Point(88, 219);
+            switchSectionTick.Margin = new Padding(3, 2, 3, 2);
             switchSectionTick.Name = "switchSectionTick";
-            switchSectionTick.Size = new Size(18, 17);
+            switchSectionTick.Size = new Size(15, 14);
             switchSectionTick.TabIndex = 16;
             switchSectionTick.UseVisualStyleBackColor = true;
             switchSectionTick.CheckedChanged += switchSectionTick_CheckedChanged;
@@ -200,18 +206,19 @@
             // payoutLabel
             // 
             payoutLabel.AutoSize = true;
-            payoutLabel.Location = new Point(265, 234);
+            payoutLabel.Location = new Point(232, 176);
             payoutLabel.Name = "payoutLabel";
-            payoutLabel.Size = new Size(67, 20);
+            payoutLabel.Size = new Size(56, 15);
             payoutLabel.TabIndex = 15;
             payoutLabel.Text = "Payout: x";
             payoutLabel.Visible = false;
             // 
             // useDiceButton
             // 
-            useDiceButton.Location = new Point(3, 285);
+            useDiceButton.Location = new Point(3, 214);
+            useDiceButton.Margin = new Padding(3, 2, 3, 2);
             useDiceButton.Name = "useDiceButton";
-            useDiceButton.Size = new Size(91, 29);
+            useDiceButton.Size = new Size(80, 22);
             useDiceButton.TabIndex = 14;
             useDiceButton.Text = "Cast";
             useDiceButton.UseVisualStyleBackColor = true;
@@ -221,18 +228,20 @@
             // 
             rollBox.DisplayMember = "title";
             rollBox.FormattingEnabled = true;
-            rollBox.Location = new Point(3, 157);
+            rollBox.ItemHeight = 15;
+            rollBox.Location = new Point(3, 118);
+            rollBox.Margin = new Padding(3, 2, 3, 2);
             rollBox.Name = "rollBox";
-            rollBox.Size = new Size(122, 124);
+            rollBox.Size = new Size(107, 94);
             rollBox.TabIndex = 13;
             rollBox.SelectedIndexChanged += rollBox_SelectedIndexChanged;
             // 
             // diceLabel
             // 
             diceLabel.AutoSize = true;
-            diceLabel.Location = new Point(180, 162);
+            diceLabel.Location = new Point(158, 122);
             diceLabel.Name = "diceLabel";
-            diceLabel.Size = new Size(138, 20);
+            diceLabel.Size = new Size(109, 15);
             diceLabel.TabIndex = 12;
             diceLabel.Text = "hidden for dice pos";
             diceLabel.Visible = false;
@@ -241,27 +250,27 @@
             // 
             currentPlayerLabel.AutoSize = true;
             currentPlayerLabel.Font = new Font("Segoe UI", 15F);
-            currentPlayerLabel.Location = new Point(226, 3);
+            currentPlayerLabel.Location = new Point(198, 2);
             currentPlayerLabel.Name = "currentPlayerLabel";
-            currentPlayerLabel.Size = new Size(183, 35);
+            currentPlayerLabel.Size = new Size(144, 28);
             currentPlayerLabel.TabIndex = 11;
             currentPlayerLabel.Text = "Current Player: ";
             // 
             // moneyLabel
             // 
             moneyLabel.AutoSize = true;
-            moneyLabel.Location = new Point(143, 55);
+            moneyLabel.Location = new Point(125, 41);
             moneyLabel.Name = "moneyLabel";
-            moneyLabel.Size = new Size(57, 20);
+            moneyLabel.Size = new Size(47, 15);
             moneyLabel.TabIndex = 10;
             moneyLabel.Text = "Money:";
             // 
             // healthLabel
             // 
             healthLabel.AutoSize = true;
-            healthLabel.Location = new Point(143, 35);
+            healthLabel.Location = new Point(125, 26);
             healthLabel.Name = "healthLabel";
-            healthLabel.Size = new Size(60, 20);
+            healthLabel.Size = new Size(48, 15);
             healthLabel.TabIndex = 9;
             healthLabel.Text = "Health: ";
             // 
@@ -278,62 +287,57 @@
             shopPanel.Controls.Add(moneyLabelShop);
             shopPanel.Controls.Add(upgradesBox);
             shopPanel.Controls.Add(continueFromShopButton);
-            shopPanel.Location = new Point(726, 27);
+            shopPanel.Location = new Point(686, 20);
+            shopPanel.Margin = new Padding(3, 2, 3, 2);
             shopPanel.Name = "shopPanel";
-            shopPanel.Size = new Size(498, 281);
+            shopPanel.Size = new Size(620, 265);
             shopPanel.TabIndex = 10;
             shopPanel.Visible = false;
             // 
             // healthBarShop
             // 
-            healthBarShop.Location = new Point(81, 35);
+            healthBarShop.Location = new Point(71, 26);
+            healthBarShop.Margin = new Padding(3, 2, 3, 2);
             healthBarShop.Name = "healthBarShop";
-            healthBarShop.Size = new Size(125, 20);
+            healthBarShop.Size = new Size(109, 15);
             healthBarShop.TabIndex = 20;
             // 
             // upgradeRollButton
             // 
-            upgradeRollButton.Location = new Point(379, 188);
+            upgradeRollButton.Location = new Point(332, 141);
+            upgradeRollButton.Margin = new Padding(3, 2, 3, 2);
             upgradeRollButton.Name = "upgradeRollButton";
-            upgradeRollButton.Size = new Size(94, 29);
+            upgradeRollButton.Size = new Size(82, 22);
             upgradeRollButton.TabIndex = 19;
             upgradeRollButton.Text = "Buy";
             upgradeRollButton.UseVisualStyleBackColor = true;
+            upgradeRollButton.Visible = false;
             upgradeRollButton.Click += upgradeRollButton_Click;
-            // 
-            // rollsUpgradeBox
-            // 
-            rollsUpgradeBox.DisplayMember = "title";
-            rollsUpgradeBox.FormattingEnabled = true;
-            rollsUpgradeBox.Location = new Point(359, 78);
-            rollsUpgradeBox.Name = "rollsUpgradeBox";
-            rollsUpgradeBox.Size = new Size(136, 104);
-            rollsUpgradeBox.TabIndex = 18;
             // 
             // incomingDamageLabelShop
             // 
             incomingDamageLabelShop.AutoSize = true;
-            incomingDamageLabelShop.Location = new Point(15, 55);
+            incomingDamageLabelShop.Location = new Point(13, 41);
             incomingDamageLabelShop.Name = "incomingDamageLabelShop";
-            incomingDamageLabelShop.Size = new Size(139, 20);
+            incomingDamageLabelShop.Size = new Size(111, 15);
             incomingDamageLabelShop.TabIndex = 17;
             incomingDamageLabelShop.Text = "Incoming Damage: ";
             // 
             // attackLabelShop
             // 
             attackLabelShop.AutoSize = true;
-            attackLabelShop.Location = new Point(328, 35);
+            attackLabelShop.Location = new Point(287, 26);
             attackLabelShop.Name = "attackLabelShop";
-            attackLabelShop.Size = new Size(58, 20);
+            attackLabelShop.Size = new Size(47, 15);
             attackLabelShop.TabIndex = 14;
             attackLabelShop.Text = "Attack: ";
             // 
             // healthLabelShop
             // 
             healthLabelShop.AutoSize = true;
-            healthLabelShop.Location = new Point(15, 35);
+            healthLabelShop.Location = new Point(13, 26);
             healthLabelShop.Name = "healthLabelShop";
-            healthLabelShop.Size = new Size(60, 20);
+            healthLabelShop.Size = new Size(48, 15);
             healthLabelShop.TabIndex = 13;
             healthLabelShop.Text = "Health: ";
             // 
@@ -341,17 +345,18 @@
             // 
             currentPlayerLabelShop.AutoSize = true;
             currentPlayerLabelShop.Font = new Font("Segoe UI", 15F);
-            currentPlayerLabelShop.Location = new Point(139, 3);
+            currentPlayerLabelShop.Location = new Point(122, 2);
             currentPlayerLabelShop.Name = "currentPlayerLabelShop";
-            currentPlayerLabelShop.Size = new Size(183, 35);
+            currentPlayerLabelShop.Size = new Size(144, 28);
             currentPlayerLabelShop.TabIndex = 12;
             currentPlayerLabelShop.Text = "Current Player: ";
             // 
             // buyButton
             // 
-            buyButton.Location = new Point(174, 188);
+            buyButton.Location = new Point(152, 141);
+            buyButton.Margin = new Padding(3, 2, 3, 2);
             buyButton.Name = "buyButton";
-            buyButton.Size = new Size(94, 29);
+            buyButton.Size = new Size(82, 22);
             buyButton.TabIndex = 12;
             buyButton.Text = "Buy";
             buyButton.UseVisualStyleBackColor = true;
@@ -360,9 +365,9 @@
             // moneyLabelShop
             // 
             moneyLabelShop.AutoSize = true;
-            moneyLabelShop.Location = new Point(15, 15);
+            moneyLabelShop.Location = new Point(13, 11);
             moneyLabelShop.Name = "moneyLabelShop";
-            moneyLabelShop.Size = new Size(57, 20);
+            moneyLabelShop.Size = new Size(47, 15);
             moneyLabelShop.TabIndex = 11;
             moneyLabelShop.Text = "Money:";
             // 
@@ -370,17 +375,20 @@
             // 
             upgradesBox.DisplayMember = "description";
             upgradesBox.FormattingEnabled = true;
-            upgradesBox.Location = new Point(35, 78);
+            upgradesBox.ItemHeight = 15;
+            upgradesBox.Location = new Point(31, 58);
+            upgradesBox.Margin = new Padding(3, 2, 3, 2);
             upgradesBox.Name = "upgradesBox";
-            upgradesBox.Size = new Size(318, 104);
+            upgradesBox.Size = new Size(279, 79);
             upgradesBox.TabIndex = 1;
             upgradesBox.ValueMember = "name";
             // 
             // returnToMenuButton
             // 
-            returnToMenuButton.Location = new Point(12, 3);
+            returnToMenuButton.Location = new Point(10, 2);
+            returnToMenuButton.Margin = new Padding(3, 2, 3, 2);
             returnToMenuButton.Name = "returnToMenuButton";
-            returnToMenuButton.Size = new Size(94, 29);
+            returnToMenuButton.Size = new Size(82, 22);
             returnToMenuButton.TabIndex = 11;
             returnToMenuButton.Text = "Menu";
             returnToMenuButton.UseVisualStyleBackColor = true;
@@ -391,15 +399,26 @@
             rollTimer.Interval = 20;
             rollTimer.Tick += rollTimer_Tick;
             // 
+            // rollsUpgradeBox
+            // 
+            rollsUpgradeBox.DisplayMember = "title";
+            rollsUpgradeBox.FormattingEnabled = true;
+            rollsUpgradeBox.ItemHeight = 15;
+            rollsUpgradeBox.Location = new Point(314, 58);
+            rollsUpgradeBox.Margin = new Padding(3, 2, 3, 2);
+            rollsUpgradeBox.Name = "rollsUpgradeBox";
+            rollsUpgradeBox.Size = new Size(120, 79);
+            rollsUpgradeBox.TabIndex = 18;
+            rollsUpgradeBox.Visible = false;
+            // 
             // Game
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1435, 391);
-            Controls.Add(returnToMenuButton);
+            ClientSize = new Size(1551, 293);
             Controls.Add(shopPanel);
+            Controls.Add(returnToMenuButton);
             Controls.Add(gamePanel);
-            Margin = new Padding(3, 4, 3, 4);
             MaximizeBox = false;
             Name = "Game";
             Text = "game";
@@ -442,7 +461,6 @@
         private Label incomingDamageLabel;
         private Label attackLabel;
         private PictureBox pictureBox1;
-        private ListBox rollsUpgradeBox;
         private Button upgradeRollButton;
         private ProgressBar healthBar;
         private ProgressBar healthBarShop;
@@ -451,5 +469,6 @@
         private PictureBox currentPlayerPicture;
         private AxWMPLib.AxWindowsMediaPlayer victorySoundPlayer;
         private Label spellDetailLabel;
+        private ListBox rollsUpgradeBox;
     }
 }
