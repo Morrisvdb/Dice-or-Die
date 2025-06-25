@@ -73,6 +73,16 @@ namespace Dice_or_Die {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] buysound {
+            get {
+                object obj = ResourceManager.GetObject("buysound", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] damage_sound {
             get {
                 object obj = ResourceManager.GetObject("damage_sound", resourceCulture);
