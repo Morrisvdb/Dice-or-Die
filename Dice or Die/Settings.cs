@@ -22,6 +22,7 @@ namespace Dice_or_Die
 
         bool music_on = true;
         bool effect_on = true;
+        bool animation_on = true;
         private void music_sound_button_Click(object sender, EventArgs e)
         {
             if (music_on == true)
@@ -88,6 +89,29 @@ namespace Dice_or_Die
         private void updateSoundButton_Click(object sender, EventArgs e)
         {
             menu.PlayStreamWithWMP(Resource1.menu_music, menu.musicPlayer, menu.music_volume);
+        }
+
+        private void roll_duration_bar_Scroll(object sender, EventArgs e)
+        {
+            menu.roll_time = (int)roll_duration_bar.Value;
+        }
+
+        private void animation_button_Click(object sender, EventArgs e)
+        {
+            if (animation_on == true)
+            {
+                animation_on = false;
+                roll_duration_bar.Enabled = false;
+                menu.roll_time = 0;
+                animation_button.Text = "Animation: off";
+            }
+            else
+            {
+                animation_on = true;
+                roll_duration_bar.Enabled = true;
+                menu.roll_time = roll_duration_bar.Value;
+                animation_button.Text = "Animation: on";
+            }
         }
     }
 }
