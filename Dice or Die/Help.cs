@@ -91,6 +91,7 @@ namespace Dice_or_Die
         private void Help_Load(object sender, EventArgs e)
         {
             back_button.Enabled = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         private void Help_FormClosed(object sender, FormClosedEventArgs e)

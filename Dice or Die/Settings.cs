@@ -84,6 +84,7 @@ namespace Dice_or_Die
         {
             sound_effects_bar.Value = menu.sound_volume;
             music_bar.Value = menu.music_volume;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         private void updateSoundButton_Click(object sender, EventArgs e)

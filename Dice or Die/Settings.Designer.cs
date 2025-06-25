@@ -156,7 +156,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightSkyBlue;
-            ClientSize = new Size(800, 317);
+            ClientSize = new Size(582, 271);
             Controls.Add(animation_button);
             Controls.Add(label3);
             Controls.Add(roll_duration_bar);
